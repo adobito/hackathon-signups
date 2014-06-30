@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC
+"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+	<session-factory>
+		<property name="hibernate.bytecode.use_reflection_optimizer">false</property>
+		<property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+		<property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+		<property name="hibernate.show_sql">true</property>
+		<property name="hibernate.format_sql">true</property>
+		<property name="hibernate.use_sql_comments">false</property>
+		<mapping class="database.dto.User"></mapping>
+		<mapping class="database.dto.UserInfo"></mapping>
+		<mapping class="database.dto.ShirtSize"></mapping>
+		<mapping class="database.dto.Resume"></mapping>
+		<mapping class="database.dto.LoginSession"></mapping>
+		<mapping class="database.dto.University"></mapping>
+		<mapping class="database.dto.Event"></mapping>
+		<mapping class="database.dto.EventAttendance"></mapping>
+		
+		
+	</session-factory>
+</hibernate-configuration>
