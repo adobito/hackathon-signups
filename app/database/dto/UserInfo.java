@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -30,7 +31,7 @@ public class UserInfo implements Serializable{
 	private String github;
 	private String linkedin;
 	private Resume resume;
-	private String sex;
+	private Sex sex;
 	private ShirtSize shirtSize;
 	
 	
@@ -88,14 +89,14 @@ public class UserInfo implements Serializable{
 	}
 
 
-	@Column(name = "sex")
-	public String getSex() {
+
+	@ManyToOne
+	@JoinColumn(name="sex_id")
+	public Sex getSex() {
 		return sex;
 	}
 
-
-
-	public void setSex(String sex) {
+	public void setSex(Sex sex) {
 		this.sex = sex;
 	}
 

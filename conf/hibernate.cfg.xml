@@ -10,14 +10,18 @@
 		<property name="hibernate.show_sql">true</property>
 		<property name="hibernate.format_sql">true</property>
 		<property name="hibernate.use_sql_comments">false</property>
-		<mapping class="database.dto.User"></mapping>
-		<mapping class="database.dto.UserInfo"></mapping>
-		<mapping class="database.dto.ShirtSize"></mapping>
-		<mapping class="database.dto.Resume"></mapping>
-		<mapping class="database.dto.LoginSession"></mapping>
-		<mapping class="database.dto.University"></mapping>
-		<mapping class="database.dto.Event"></mapping>
-		<mapping class="database.dto.EventAttendance"></mapping>
+		<mapping class="database.dto.User"/>
+		<mapping class="database.dto.UserInfo"/>
+		<mapping class="database.dto.ShirtSize"/>
+		<mapping class="database.dto.Resume"/>
+		<mapping class="database.dto.LoginSession"/>
+		<mapping class="database.dto.University"/>
+		<mapping class="database.dto.Event"/>
+		<mapping class="database.dto.EventAttendance"/>
+		<mapping class="database.dto.Sex"/>
+		<mapping class="database.dto.Skill"/>
+		<mapping class="database.dto.SkillCategory"/>
+		<mapping class="database.dto.UserSkill"/>
 		
 		
 	</session-factory>
