@@ -11,7 +11,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "userinfo")
+@Table(name = "user_info")
 public class UserInfo implements Serializable{
 
 	/**
@@ -25,6 +25,7 @@ public class UserInfo implements Serializable{
 	public static final String RESUME = "resume";
 	public static final String SEX = "sex";
 	public static final String SHIRT_SIZE = "shirtSize";
+	public static final String USER_ID = "user.userId";
 	
 	private User user;
 	private String name;

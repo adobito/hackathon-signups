@@ -2,6 +2,7 @@ package database.dto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
@@ -14,7 +15,7 @@ public class Sex {
 
 	public Sex() {
 	}
-
+	@Id
 	@Column(name = "sex_id")
 	public Integer getId() {
 		return id;

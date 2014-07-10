@@ -2,6 +2,9 @@ package database.dto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -12,6 +15,7 @@ public class Skill {
 	private SkillCategory skillCategory;
 	private String name;
 	
+	@Id
 	@Column(name = "skill_id")
 	public Integer getId() {
 		return id;
@@ -19,7 +23,8 @@ public class Skill {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	@Column(name = "skill_category_id")
+	@ManyToOne
+	@JoinColumn(name = "skill_category_id")
 	public SkillCategory getSkillCategory() {
 		return skillCategory;
 	}

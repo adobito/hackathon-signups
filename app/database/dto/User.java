@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -72,7 +73,7 @@ public class User implements Serializable {
 		this.isActive = isActive;
 	}
 	
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	public UserInfo getUserInfo() {
 		return userInfo;
@@ -81,7 +82,7 @@ public class User implements Serializable {
 		this.userInfo = userInfo;
 	}
 	
-	@OneToMany
+	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	public List<LoginSession> getLoginSessions() {
 		return loginSessions;
@@ -90,7 +91,7 @@ public class User implements Serializable {
 		this.loginSessions = loginSessions;
 	}
 	
-	@OneToMany
+	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "resume_id")
 	public List<Resume> getResumes() {
 		return resumes;
@@ -98,7 +99,7 @@ public class User implements Serializable {
 	public void setResumes(List<Resume> resumes) {
 		this.resumes = resumes;
 	}
-	@OneToMany
+	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	public List<EventAttendance> getEventAttendances() {
 		return eventAttendances;

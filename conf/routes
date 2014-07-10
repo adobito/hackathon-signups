@@ -4,6 +4,19 @@
 
 # Home page
 GET     /                           controllers.Application.index
+GET		/users						controllers.Gets.usersAll
+GET		/users/$id<[0-9]+>			controllers.Gets.users(id: Int)
+GET		/users/me					controllers.Gets.userMe
+GET		/logout						controllers.Gets.logout
 
+#Posts
+POST	/login						controllers.Posts.login
+POST	/register						controllers.Posts.register
+
+#Puts
+PUT 	/users/$id<[0-9]+>			controllers.Puts.users(id: Int)
+
+#Deletes
+DELETE  /users/$id<[0-9]+>					controllers.Deletes.users(id: Int)
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
