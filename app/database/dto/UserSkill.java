@@ -12,6 +12,10 @@ import javax.persistence.Table;
 @Table(name = "user_skill")
 public class UserSkill implements Serializable{
 
+	public static final String USER = "user";
+	public static final String USER_ID = "user." + User.ID;
+	public static final String SKILL = "skill";
+	public static final String SKILL_ID = "skill." + Skill.ID;
 	private User user;
 	private Skill skill;
 	

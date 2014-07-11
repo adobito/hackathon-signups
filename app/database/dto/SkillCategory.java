@@ -9,6 +9,8 @@ import javax.persistence.Table;
 @Table(name="skill_category")
 public class SkillCategory {
 
+	public static final String ID = "id";
+	public static final String NAME = "name";
 	private Integer id;
 	private String name;
 

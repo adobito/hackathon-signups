@@ -9,6 +9,8 @@ import javax.persistence.Table;
 @Table(name = "sex")
 public class Sex {
 
+	public static final String ID = "sexId";
+	public static final String NAME = "name";
 	private Integer id;
 	private String name;
 

@@ -21,7 +21,7 @@ public class User implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public static final String USER_ID = "userId";
+	public static final String ID = "userId";
 	public static final String EMAIL = "email";
 	public static final String PASSWORD = "password";
 	public static final String IS_ACTIVE = "isActive";

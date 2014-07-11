@@ -27,7 +27,7 @@ object Dao {
 	def getUser(userId: Int): Option[User] = {
 			val session = hibernateService.getCurrentSession(true);
 			val criteria = session.createCriteria(classOf[User]);
-			criteria.add(Restrictions.eq(User.USER_ID, userId));
+			criteria.add(Restrictions.eq(User.ID, userId));
 			val user = criteria.uniqueResult().asInstanceOf[User];
 			hibernateService.closeSessionIfNecessary(session);
 			Option(user)
@@ -77,34 +77,34 @@ object Dao {
 			hibernateService.closeSessionIfNecessary(session);
 			Option(event)
 	}
-	def getEventsInRange(fromStartTime: Date, untilEndTime: Date, startingAt: Int, maxAmount: Int): List[Event] = {
+	def getEventsInRange(fromStartTime: Date, untilEndTime: Date, startingAt: Int, maxAmount: Int): Array[Event] = {
 			val session = hibernateService.getCurrentSession(true);
 			val criteria = session.createCriteria(classOf[Event])
 					.setMaxResults(maxAmount)
 					.setFirstResult(startingAt)
 					.add(Restrictions.ge(Event.START_TIME, fromStartTime))
 					.add(Restrictions.le(Event.END_TIME, untilEndTime));
-			val events = criteria.list().asInstanceOf[List[Event]];
+			val events = criteria.list().asInstanceOf[java.util.List[Event]].asScala.toArray;
 			hibernateService.closeSessionIfNecessary(session);
 			events;
 	}
-	def getEventsAfter(fromStartTime: Date, startingAt: Int, maxAmount: Int): List[Event] = {
+	def getEventsAfter(fromStartTime: Date, startingAt: Int, maxAmount: Int): Array[Event] = {
 			val session = hibernateService.getCurrentSession(true);
 			val criteria = session.createCriteria(classOf[Event])
 					.setMaxResults(maxAmount)
 					.setFirstResult(startingAt)
-					.add(Restrictions.ge(Event.START_TIME, fromStartTime))
-					val events = criteria.list().asInstanceOf[List[Event]];
+					.add(Restrictions.ge(Event.START_TIME, fromStartTime));
+			val events = criteria.list().asInstanceOf[java.util.List[Event]].asScala.toArray;
 			hibernateService.closeSessionIfNecessary(session);
 			events;
 	}
 	//Event Attendance
-	def getEventAttendance(eventId: Int): List[EventAttendance] = {
+	def getEventAttendance(eventId: Int): Array[EventAttendance] = {
 			val session = hibernateService.getCurrentSession(true);
 			val criteria = session.createCriteria(classOf[EventAttendance],"attendance")
 					.createAlias("attendance.event", "event")
 					.add(Restrictions.eq("event.eventId", eventId));
-			val eventAttendanceList = criteria.list().asInstanceOf[List[EventAttendance]];
+			val eventAttendanceList = criteria.list().asInstanceOf[java.util.List[EventAttendance]].asScala.toArray;
 			hibernateService.closeSessionIfNecessary(session);
 			eventAttendanceList;
 	}
@@ -118,12 +118,13 @@ object Dao {
 			Option(resume);
 	}
 	//LoginSessions
-	def getLoginSessions(userId: Int): List[LoginSession] = {
-
-			// TODO
-			val listBuffer = new ListBuffer[LoginSession]();
-
-			listBuffer.toList;
+	def getLoginSessions(userId: Int): Array[LoginSession] = {
+			val session = hibernateService.getCurrentSession(true);
+			val criteria = session.createCriteria(classOf[LoginSession])
+					.add(Restrictions.eq(LoginSession.USER + ".userId", userId));
+			val eventAttendanceList = criteria.list().asInstanceOf[java.util.List[LoginSession]].asScala.toArray;
+			hibernateService.closeSessionIfNecessary(session);
+			eventAttendanceList;
 	}
 	def getLoginSessions(email: String): List[LoginSession] = {
 			val listBuffer = new ListBuffer[LoginSession]();
@@ -139,40 +140,74 @@ object Dao {
 			Option(loginSession);
 	}
 	//University
-	def getUniversities(): List[University] = {
-			val listBuffer = new ListBuffer[University]();
-
-			listBuffer.toList;
+	def getUniversities(): Array[University] = {
+			val session = hibernateService.getCurrentSession(true);
+			val criteria = session.createCriteria(classOf[University]);
+			val universities = criteria.list().asInstanceOf[java.util.List[University]].asScala.toArray;
+			hibernateService.closeSessionIfNecessary(session);
+			universities;
 	}
 	def getUniversity(id: Int): Option[University] = {
-			None;
+			val session = hibernateService.getCurrentSession(true);
+			val criteria = session.createCriteria(classOf[University])
+					.add(Restrictions.eq(University.UNIVERSITY_ID, id));
+			val university = criteria.uniqueResult().asInstanceOf[University];
+			hibernateService.closeSessionIfNecessary(session);
+			Option(university);
 	}
 	//Sex
-	def getSexes(): List[Sex] = {
-			val listBuffer = new ListBuffer[Sex]();
-			listBuffer.toList;
+	def getSexes(): Array[Sex] = {
+			val session = hibernateService.getCurrentSession(true);
+			val criteria = session.createCriteria(classOf[University]);
+			val sexes = criteria.list().asInstanceOf[java.util.List[Sex]].asScala.toArray;
+			hibernateService.closeSessionIfNecessary(session);
+			sexes;
 	}
 	def getSex(id: Int): Option[Sex] = {
-			None;
+			val session = hibernateService.getCurrentSession(true);
+			val criteria = session.createCriteria(classOf[University])
+					.add(Restrictions.eq(Sex.ID,id));
+			val sex = criteria.uniqueResult().asInstanceOf[Sex];
+			hibernateService.closeSessionIfNecessary(session);
+			Option(sex);
 	}
-	def getSkills(): List[Skill] = {
-			val listBuffer = new ListBuffer[Skill]();
-			listBuffer.toList;
+	def getSkills(): Array[Skill] = {
+			val session = hibernateService.getCurrentSession(true);
+			val criteria = session.createCriteria(classOf[Skill]);
+			val skills = criteria.list().asInstanceOf[java.util.List[Skill]].asScala.toArray;
+			hibernateService.closeSessionIfNecessary(session);
+			skills;
 	}
-	def getSkillCategories(): List[SkillCategory] = {
-			val listBuffer = new ListBuffer[SkillCategory]();
-			listBuffer.toList;
+	def getSkillCategories(): Array[SkillCategory] = {
+			val session = hibernateService.getCurrentSession(true);
+			val criteria = session.createCriteria(classOf[SkillCategory]);
+			val skillCategories = criteria.list().asInstanceOf[java.util.List[SkillCategory]].asScala.toArray;
+			hibernateService.closeSessionIfNecessary(session);
+			skillCategories;
 	}
 	def getSkillCategory(id: Int): Option[SkillCategory] = {
-			None;
+			val session = hibernateService.getCurrentSession(true);
+			val criteria = session.createCriteria(classOf[SkillCategory])
+					.add(Restrictions.eq(SkillCategory.ID, id));
+			val skillCategory = criteria.uniqueResult().asInstanceOf[SkillCategory];
+			hibernateService.closeSessionIfNecessary(session);
+			Option(skillCategory);
 	}
-	def getSkillsByCategory(categoryId: Int): List[Skill] = {
-			val listBuffer = new ListBuffer[Skill]();
-			listBuffer.toList;
+	def getSkillsByCategory(categoryId: Int): Array[Skill] = {
+			val session = hibernateService.getCurrentSession(true);
+			val criteria = session.createCriteria(classOf[Skill])
+					.add(Restrictions.eq(Skill.SKILL_CATEGORY_ID, categoryId));
+			val skills = criteria.list().asInstanceOf[java.util.List[Skill]].asScala.toArray;
+			hibernateService.closeSessionIfNecessary(session);
+			skills;
 	}
-	def getSkillsByCategory(category: SkillCategory): List[Skill] = {
-			val listBuffer = new ListBuffer[Skill]();
-			listBuffer.toList;
+	def getSkillsByCategory(category: SkillCategory): Array[Skill] = {
+				val session = hibernateService.getCurrentSession(true);
+			val criteria = session.createCriteria(classOf[Skill])
+					.add(Restrictions.eq(Skill.SKILL_CATEGORY_ID, category.getId()));
+			val skills = criteria.list().asInstanceOf[java.util.List[Skill]].asScala.toArray;
+			hibernateService.closeSessionIfNecessary(session);
+			skills;
 	}
 	def login(email: String, password: String): Boolean = {
 			val user = Dao.getUser(email).getOrElse(return false);
@@ -216,8 +251,7 @@ object Dao {
 			transaction.commit();
 			session.close();
 			true;
-
-	}
+			;	}
 
 
 }	

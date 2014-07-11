@@ -1,6 +1,7 @@
 package database.dto;
 
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,7 +45,6 @@ public class University implements Serializable{
 	public void setName(String name) {
 		this.name = name;
 	}
-
 	
 	
 }
