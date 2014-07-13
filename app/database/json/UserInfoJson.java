@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import database.dto.UserInfo;
 
 
-public class UserInfoJsonDto {
+public class UserInfoJson {
 	private Integer userId;
 	private String name;
 	private String github;
@@ -15,10 +15,10 @@ public class UserInfoJsonDto {
 	private String shirtSize;
 
 
-	public UserInfoJsonDto() {
+	public UserInfoJson() {
 	}
 
-	public UserInfoJsonDto(UserInfo userInfo) {
+	public UserInfoJson(UserInfo userInfo) {
 		if(userInfo != null) {
 			if(userInfo.getUser() != null) {
 				this.userId = userInfo.getUser().getUserId();

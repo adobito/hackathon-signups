@@ -8,10 +8,17 @@ GET		/users						controllers.Gets.usersAll
 GET		/users/$id<[0-9]+>			controllers.Gets.users(id: Int)
 GET		/users/me					controllers.Gets.userMe
 GET		/logout						controllers.Gets.logout
+GET		/users/$id<[0-9]+>/skills	controllers.Gets.userSkills(id: Int)
+#GET		/events						controllers.Gets.events
+GET		/events/$id<[0-9]+>			controllers.Gets.event(id: Int)
+GET		/events/$id<[0-9]+>/users	controllers.Gets.eventAttendees(id: Int)
+GET		/university					controllers.Gets.universities
+
 
 #Posts
 POST	/login						controllers.Posts.login
 POST	/register					controllers.Posts.register
+POST	/events						controllers.Posts.newEvent
 
 #Puts
 PUT 	/users/$id<[0-9]+>			controllers.Puts.users(id: Int)

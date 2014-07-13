@@ -35,9 +35,7 @@ public class User implements Serializable {
 	private String password;
 	private boolean isActive;
 	private UserInfo userInfo;
-	private List<LoginSession> loginSessions;
-	private List<Resume> resumes;
-	private List<EventAttendance> eventAttendances;
+
 	
 	public User() {
 	}
@@ -81,31 +79,6 @@ public class User implements Serializable {
 	public void setUserInfo(UserInfo userInfo) {
 		this.userInfo = userInfo;
 	}
-	
-	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
-	public List<LoginSession> getLoginSessions() {
-		return loginSessions;
-	}
-	public void setLoginSessions(List<LoginSession> loginSessions) {
-		this.loginSessions = loginSessions;
-	}
-	
-	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumn(name = "resume_id")
-	public List<Resume> getResumes() {
-		return resumes;
-	}
-	public void setResumes(List<Resume> resumes) {
-		this.resumes = resumes;
-	}
-	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
-	public List<EventAttendance> getEventAttendances() {
-		return eventAttendances;
-	}
-	public void setEventAttendances(List<EventAttendance> eventAttendances) {
-		this.eventAttendances = eventAttendances;
-	}
+
 
 }

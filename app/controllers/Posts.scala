@@ -11,6 +11,8 @@ import java.util.NoSuchElementException
 import database.Dao
 import database.json.SessionTokenJson
 import database.dto.User
+import database.json.EventJson
+import database.dto.Event
 
 object Posts extends Controller {
 
@@ -21,7 +23,7 @@ object Posts extends Controller {
 			val json = request.body.asJson.getOrElse(throw new NoSuchElementException("No JSON body supplied."));
 			val gson = new Gson();
 			val userJson: UserJson = gson.fromJson(json.toString, classOf[UserJson]);
-			
+
 			if(userJson.getEmail() == null || userJson.getEmail().isEmpty()) {
 				throw new NoSuchElementException("No email address received.");
 			}
@@ -54,13 +56,13 @@ object Posts extends Controller {
 				throw new NoSuchElementException("No email address received.");
 			}
 			if(Dao.getUser(userJson.getEmail()).isDefined) {
-			  throw new NoSuchElementException("User already exists.");
+				throw new NoSuchElementException("User already exists.");
 			}
 			if(userJson.getPassword() == null || userJson.getPassword().isEmpty()) {
 				throw new NoSuchElementException("No password received.");
 			}
 			Dao.register(userJson.getEmail(), userJson.getPassword()).getOrElse(throw new Exception()); //need to manage this
-			
+
 			Ok("{\"result\":\"true\"}").as("application/json");
 		}
 		catch {
@@ -68,4 +70,22 @@ object Posts extends Controller {
 		case e: Exception => { InternalServerError("Something went wrong...") }
 		}
 	}
+
+	def newEvent = Action {
+		request => 
+		try {
+			val json = request.body.asJson.getOrElse(throw new NoSuchElementException("No JSON body supplied."));
+			val gson = new Gson();
+			val eventJson = gson.fromJson(json.toString, classOf[EventJson]);
+			val event = Dao.addEvent(eventJson.getName(), eventJson.getStartTime(), eventJson.getEndTime())
+					.getOrElse(throw new Exception("Something went wrong.."));
+			val newEventJson = new EventJson(event);
+			Ok(gson.toJson(newEventJson)).as("application/json");
+		}
+		catch {
+		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
+//		case e: Exception => { InternalServerError("Something went wrong...") }
+		}
+	}
+
 }

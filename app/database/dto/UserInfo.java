@@ -1,12 +1,18 @@
 package database.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -34,8 +40,12 @@ public class UserInfo implements Serializable{
 	private Resume resume;
 	private Sex sex;
 	private ShirtSize shirtSize;
+	private List<LoginSession> loginSessions;
+	private List<Resume> resumes;
+	private List<EventAttendance> eventAttendances;
+	private List<Skill> skills;
 	
-	
+
 	public UserInfo() {
 	}
 
@@ -112,6 +122,43 @@ public class UserInfo implements Serializable{
 		this.shirtSize = shirtSize;
 	}
 	
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	public List<LoginSession> getLoginSessions() {
+		return loginSessions;
+	}
+	public void setLoginSessions(List<LoginSession> loginSessions) {
+		this.loginSessions = loginSessions;
+	}
+	
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn(name = "resume_id")
+	public List<Resume> getResumes() {
+		return resumes;
+	}
+	public void setResumes(List<Resume> resumes) {
+		this.resumes = resumes;
+	}
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	public List<EventAttendance> getEventAttendances() {
+		return eventAttendances;
+	}
+	public void setEventAttendances(List<EventAttendance> eventAttendances) {
+		this.eventAttendances = eventAttendances;
+	}
+	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "user_skill", joinColumns = { 
+			@JoinColumn(name = "user_id", nullable = false, updatable = false) }, 
+			inverseJoinColumns = { @JoinColumn(name = "skill_id", 
+					nullable = false, updatable = false) })
+	public List<Skill> getSkills() {
+		return skills;
+	}
+
+	public void setSkills(List<Skill> skills) {
+		this.skills = skills;
+	}
 	
 	
 	

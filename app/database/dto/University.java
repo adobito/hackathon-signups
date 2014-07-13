@@ -1,8 +1,6 @@
 package database.dto;
 
 import java.io.Serializable;
-import java.nio.charset.StandardCharsets;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
