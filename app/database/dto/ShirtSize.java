@@ -7,9 +7,12 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import database.json.Json;
+import database.json.ShirtSizeJson;
+
 @Entity
 @Table(name = "shirt_size")
-public class ShirtSize implements Serializable {
+public class ShirtSize implements Serializable, Jsonable {
 
 	
 	
@@ -53,6 +56,11 @@ public class ShirtSize implements Serializable {
 
 	public void setShortName(String shortName) {
 		this.shortName = shortName;
+	}
+
+	@Override
+	public Json toJson() {
+		return new ShirtSizeJson(this);
 	}
 
 	
