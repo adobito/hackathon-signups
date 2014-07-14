@@ -2,6 +2,7 @@ package database.dto;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -28,7 +29,7 @@ public class Skill {
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "skill_category_id")
 	public SkillCategory getSkillCategory() {
 		return skillCategory;

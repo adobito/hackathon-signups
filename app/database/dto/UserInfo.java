@@ -32,25 +32,26 @@ public class UserInfo implements Serializable{
 	public static final String SEX = "sex";
 	public static final String SHIRT_SIZE = "shirtSize";
 	public static final String USER_ID = "user.userId";
-	
+
 	private User user;
 	private String name;
 	private String github;
 	private String linkedin;
 	private Resume resume;
+	private University university;
 	private Sex sex;
 	private ShirtSize shirtSize;
 	private List<LoginSession> loginSessions;
 	private List<Resume> resumes;
 	private List<EventAttendance> eventAttendances;
 	private List<Skill> skills;
-	
+
 
 	public UserInfo() {
 	}
 
 	@Id
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	public User getUser() {
 		return user;
@@ -89,19 +90,27 @@ public class UserInfo implements Serializable{
 	public void setLinkedin(String linkedin) {
 		this.linkedin = linkedin;
 	}
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "resume_id")
 	public Resume getResume() {
 		return resume;
 	}
-	
+
 	public void setResume(Resume resume) {
 		this.resume = resume;
 	}
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "university_id")
+	public University getUniversity() {
+		return university;
+	}
 
+	public void setUniversity(University university) {
+		this.university = university;
+	}
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="sex_id")
 	public Sex getSex() {
 		return sex;
@@ -121,7 +130,7 @@ public class UserInfo implements Serializable{
 	public void setShirtSize(ShirtSize shirtSize) {
 		this.shirtSize = shirtSize;
 	}
-	
+
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	public List<LoginSession> getLoginSessions() {
@@ -130,7 +139,7 @@ public class UserInfo implements Serializable{
 	public void setLoginSessions(List<LoginSession> loginSessions) {
 		this.loginSessions = loginSessions;
 	}
-	
+
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "resume_id")
 	public List<Resume> getResumes() {
@@ -151,7 +160,7 @@ public class UserInfo implements Serializable{
 	@JoinTable(name = "user_skill", joinColumns = { 
 			@JoinColumn(name = "user_id", nullable = false, updatable = false) }, 
 			inverseJoinColumns = { @JoinColumn(name = "skill_id", 
-					nullable = false, updatable = false) })
+			nullable = false, updatable = false) })
 	public List<Skill> getSkills() {
 		return skills;
 	}
@@ -159,8 +168,8 @@ public class UserInfo implements Serializable{
 	public void setSkills(List<Skill> skills) {
 		this.skills = skills;
 	}
-	
-	
-	
+
+
+
 
 }

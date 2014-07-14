@@ -5,8 +5,10 @@ import java.sql.Timestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -19,7 +21,9 @@ public class EventAttendance implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	public static final String USER = "user";
+	public static final String USER_ID = USER + "." + User.ID;
 	public static final String EVENT = "event";
+	public static final String EVENT_ID = EVENT + "." + Event.EVENT_ID;
 	public static final String NAME = "name";
 	public static final String GITHUB = "github";
 	public static final String LINKEDIN = "linkedin";
@@ -34,7 +38,7 @@ public class EventAttendance implements Serializable {
 	private String linekdIn;
 	private Resume resume;
 	private University university;
-	private String sex;
+	private Sex sex;
 	private ShirtSize shirtSize;
 	private Timestamp signup_timestamp;
 	private Timestamp modified_timestamp;
@@ -44,7 +48,7 @@ public class EventAttendance implements Serializable {
 	}
 
 	@Id
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
 	public User getUser() {
 		return user;
@@ -55,7 +59,7 @@ public class EventAttendance implements Serializable {
 	}
 
 	@Id
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "event_id")
 	public Event getEvent() {
 		return event;
@@ -91,7 +95,7 @@ public class EventAttendance implements Serializable {
 		this.linekdIn = linekdIn;
 	}
 	
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "resume_id")
 	public Resume getResume() {
 		return resume;
@@ -101,7 +105,7 @@ public class EventAttendance implements Serializable {
 		this.resume = resume;
 	}
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "university_id")
 	public University getUniversity() {
 		return university;
@@ -111,16 +115,18 @@ public class EventAttendance implements Serializable {
 		this.university = university;
 	}
 
-	@Column(name = "sex")
-	public String getSex() {
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "sex_id")
+	public Sex getSex() {
 		return sex;
 	}
 
-	public void setSex(String sex) {
+	public void setSex(Sex sex) {
 		this.sex = sex;
 	}
-	
-	@OneToOne
+
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "shirt_size_id")
 	public ShirtSize getShirtSize() {
 		return shirtSize;

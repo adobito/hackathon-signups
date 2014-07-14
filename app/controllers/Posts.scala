@@ -84,7 +84,25 @@ object Posts extends Controller {
 		}
 		catch {
 		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
-//		case e: Exception => { InternalServerError("Something went wrong...") }
+		case e: Exception => { InternalServerError("Something went wrong...") }
+		}
+	}
+	def attendEvent(eventId: Int) = Action {
+		request => 
+		try {
+			val time = System.currentTimeMillis();
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse("token", Seq(""))(0);
+			val session = Dao.getLoginSession(token).getOrElse(throw new Exception("Forbidden. Must Auth."));
+			val user = session.getUser();
+			val event = Dao.getEvent(eventId).getOrElse(throw new NoSuchElementException("No event found."));
+			val eventAttendance = Dao.attendEvent(event.getEventId(), user.getUserId());
+			println(System.currentTimeMillis() - time);
+			Ok("").as("application/json"); //don't know what to send
+		}
+		catch {
+		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
+		case e: Exception => { InternalServerError("Something went wrong...") }
 		}
 	}
 

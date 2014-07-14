@@ -19,6 +19,7 @@ GET		/university					controllers.Gets.universities
 POST	/login						controllers.Posts.login
 POST	/register					controllers.Posts.register
 POST	/events						controllers.Posts.newEvent
+POST	/events/$id<[0-9]+>/attend	controllers.Posts.attendEvent(id: Int)
 
 #Puts
 PUT 	/users/$id<[0-9]+>			controllers.Puts.users(id: Int)

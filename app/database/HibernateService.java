@@ -16,10 +16,13 @@ public class HibernateService {
 	
 	public Session getCurrentSession(boolean openIfNecessary) {
 		Session currSession = session.get();
-		if(currSession == null && openIfNecessary || !currSession.isOpen()) {
+		if((currSession == null && openIfNecessary) || !currSession.isOpen()) {
+			
 			Session newSession = sessionFactory.openSession();
 			session.set(newSession);
+			System.out.println("New Session Made.");
 		}
+		System.out.println("Session returned.");
 		return session.get();
 	}
 	public void closeSessionIfNecessary(Session session) {
@@ -28,12 +31,13 @@ public class HibernateService {
 			return;
 		}
 		
-		if(session.isOpen() && session.isDirty()) {
-			session.close();
-			if(this.session.get() == session) {
-				this.session.set(null);
-			}
-		}
+//		if(session.isOpen() && session.isDirty()) {
+//			System.out.println("Session closed.");
+//			session.close();
+//			if(this.session.get() == session) {
+//				this.session.set(null);
+//			}
+//		}
 	}
 
 }

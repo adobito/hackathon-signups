@@ -21,7 +21,7 @@ import database.dto.UserInfo
 
 object Dao {
 
-	private val hibernateService = new HibernateService(Database.SessionFactory);
+	private val hibernateService = Database.HibernateService;
 	private val SessionHashByteSize = 32;
 	//Users
 	def getUser(userId: Int): Option[User] = {
@@ -107,6 +107,15 @@ object Dao {
 			val eventAttendanceList = criteria.list().asInstanceOf[java.util.List[EventAttendance]].asScala.toList;
 			hibernateService.closeSessionIfNecessary(session);
 			eventAttendanceList;
+	}
+	def getEventAttendee(eventId: Int, userId: Int): Option[EventAttendance] = {
+	  val session = hibernateService.getCurrentSession(true);
+	  val criteria = session.createCriteria(classOf[EventAttendance])
+			  .add(Restrictions.eq(EventAttendance.EVENT_ID,eventId))
+			  .add(Restrictions.eq(EventAttendance.USER_ID, userId));
+	  val eventAttendee = criteria.uniqueResult().asInstanceOf[EventAttendance];
+	  hibernateService.closeSessionIfNecessary(session);
+	  Option(eventAttendee);
 	}
 	//Resumes
 	def getResume(resumeId: Int): Option[Resume] = {
@@ -263,6 +272,9 @@ object Dao {
 			if(startTime.after(endTime)) {
 				return None;			
 			}
+			if(startTime.before(new Date())) { //if start time before now
+				return None;
+			} 
 			if(name.isEmpty()) {
 				return None;
 			}
@@ -276,6 +288,27 @@ object Dao {
 			transaction.commit();
 			session.close();
 			getEvent(id.toString.toInt);
+	}
+	def attendEvent(eventId: Int, userId: Int): Option[EventAttendance]  = {
+			val user = getUser(userId).getOrElse(return None);
+			val event = getEvent(eventId).getOrElse(return None);
+			val userInfo = user.getUserInfo();
+			val eventAttendee = new EventAttendance();
+			eventAttendee.setEvent(event);
+			eventAttendee.setUser(user);
+			eventAttendee.setName(userInfo.getName());
+			eventAttendee.setGithub(userInfo.getGithub());
+			eventAttendee.setLinekdIn(userInfo.getLinkedin());
+			eventAttendee.setResume(userInfo.getResume());
+			eventAttendee.setSex(userInfo.getSex());
+			eventAttendee.setShirtSize(userInfo.getShirtSize());
+			eventAttendee.setUniversity(userInfo.getUniversity());
+			val session = hibernateService.getCurrentSession(true);
+			val transaction = session.beginTransaction();
+			session.save(eventAttendee);
+			transaction.commit();
+			session.close();
+			getEventAttendee(eventId, userId);
 	}
 
 

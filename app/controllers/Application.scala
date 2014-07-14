@@ -17,7 +17,6 @@ object Application extends Controller {
 	  val skills = Dao.getSkillsByUser(1);
 	  println(skills.size);
 	  skills.foreach(x => println(x.getName()));
-
 	  val calendar = Calendar.getInstance();
 	  calendar.set(2014, Calendar.SEPTEMBER, 27, 12, 0, 0);
 	  val startDate = calendar.getTime();
