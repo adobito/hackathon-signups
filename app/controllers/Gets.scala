@@ -20,9 +20,8 @@ object Gets extends Controller {
 	def users(id: Int) = Action {
 		val userInfoOpt = Dao.getUserInfo(id);
 		val userInfo = userInfoOpt.getOrElse(new UserInfo());
-		val userInfoJson = new UserInfoJson(userInfo);
 
-		Ok(gson.fromJson(userInfoJson.toString(),classOf[UserInfoJson]).toString()).as("application/json");
+		Ok(userInfo.toJson().toJsonString()).as("application/json");
 	}
 	def userSkills(userId: Int) = Action {
 		val skills = Dao.getSkillsByUser(userId);
@@ -72,7 +71,7 @@ object Gets extends Controller {
 			val universities = Dao.getUniversities();
 			val univertiesArr = new Array[UniversityJson](universities.size);
 			for(i <- 0 until univertiesArr.size) {
-				univertiesArr(i) = new UniversityJson(universities(i));
+				univertiesArr(i) = universities(i).toJson().asInstanceOf[UniversityJson];
 			}
 			Ok(gson.toJson(univertiesArr)).as("application/json");
 
@@ -91,8 +90,7 @@ object Gets extends Controller {
 				throw new Exception("No active session found.");
 			}
 			val event = Dao.getEvent(id).getOrElse(throw new NoSuchElementException("Event not found."));
-			val eventJson = new EventJson(event);
-			Ok(gson.toJson(eventJson)).as("application/json");
+			Ok(event.toJson().toJsonString()).as("application/json");
 
 		}
 		catch {

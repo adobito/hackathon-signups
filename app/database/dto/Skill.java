@@ -8,9 +8,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import database.json.Json;
+import database.json.SkillJson;
+
 @Entity
 @Table(name = "skill")
-public class Skill {
+public class Skill implements Jsonable {
 
 	public static final String ID = "id";
 	public static final String NAME = "name";
@@ -43,6 +46,10 @@ public class Skill {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	@Override
+	public Json toJson() {
+		return new SkillJson(this);
 	}
 	
 	

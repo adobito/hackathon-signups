@@ -1,15 +1,19 @@
 package database.dto;
 
 import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import database.json.Json;
+import database.json.UniversityJson;
+
 
 @Entity
 @Table(name = "university")
-public class University implements Serializable{
+public class University implements Serializable, Jsonable{
 
 	/**
 	 * 
@@ -42,6 +46,11 @@ public class University implements Serializable{
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	@Override
+	public Json toJson() {
+		return new UniversityJson(this);
 	}
 	
 	

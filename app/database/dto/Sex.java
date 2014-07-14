@@ -5,9 +5,12 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import database.json.Json;
+import database.json.SexJson;
+
 @Entity
 @Table(name = "sex")
-public class Sex {
+public class Sex implements Jsonable {
 
 	public static final String ID = "sexId";
 	public static final String NAME = "name";
@@ -36,6 +39,10 @@ public class Sex {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	@Override
+	public Json toJson() {
+		return new SexJson(this);
 	}
 
 

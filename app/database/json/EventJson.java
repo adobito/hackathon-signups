@@ -2,9 +2,11 @@ package database.json;
 
 import java.util.Date;
 
+import com.google.gson.Gson;
+
 import database.dto.Event;
 
-public class EventJson {
+public class EventJson implements Json {
 
 	private Integer id;
 	private String name;
@@ -42,6 +44,11 @@ public class EventJson {
 	}
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
+	}
+	@Override
+	public String toJsonString() {
+		Gson gson = new Gson();
+		return gson.toJson(this);
 	}
 	
 	

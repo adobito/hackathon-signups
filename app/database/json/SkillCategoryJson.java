@@ -2,41 +2,41 @@ package database.json;
 
 import com.google.gson.Gson;
 
-import database.dto.University;
+import database.dto.SkillCategory;
 
-public class UniversityJson implements Json {
+public class SkillCategoryJson implements Json {
 
 	private Integer id;
 	private String name;
-	
-	
-	public UniversityJson(University university) {
-		this.id = university.getUniversityId();
-		this.name = university.getName();
+
+	public SkillCategoryJson(SkillCategory skillCategory) {
+		this.id = skillCategory.getId();
+		this.name = skillCategory.getName();
 	}
-	
-	public UniversityJson(Integer id, String name) {
-		this.id = id;
-		this.name = name;
+	public SkillCategoryJson() {
+		super();
 	}
+
 	public Integer getId() {
 		return id;
 	}
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	@Override
 	public String toJsonString() {
-		Gson gson = new Gson();
+		Gson gson  = new Gson();
 		return gson.toJson(this);
 	}
-	
-	
-	
+
 }

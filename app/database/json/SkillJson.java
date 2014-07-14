@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 
 import database.dto.Skill;
 
-public class SkillJson {
+public class SkillJson implements Json{
 	private Integer skillId;
 	private String category;
 	private String skillName;
@@ -40,9 +40,8 @@ public class SkillJson {
 	public void setSkillName(String skillName) {
 		this.skillName = skillName;
 	}
-
-	@Override 
-	public String toString() {
+	@Override
+	public String toJsonString() {
 		Gson gson = new Gson();
 		return gson.toJson(this);
 	}

@@ -11,9 +11,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import database.json.Json;
+import database.json.SessionTokenJson;
+
 @Entity
 @Table(name = "session")
-public class LoginSession implements Serializable {
+public class LoginSession implements Serializable, Jsonable {
 
 	/**
 	 * 
@@ -57,6 +60,11 @@ public class LoginSession implements Serializable {
 
 	public void setCreatedTimestamp(Timestamp createdTimestamp) {
 		this.createdTimestamp = createdTimestamp;
+	}
+
+	@Override
+	public Json toJson() {
+		return new SessionTokenJson(this);
 	}
 
 

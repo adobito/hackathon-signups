@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,11 +13,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Cache;
+import database.json.EventJson;
+import database.json.Json;
 
 @Entity
 @Table(name = "event")
-public class Event implements Serializable {
+public class Event implements Serializable, Jsonable {
 
 	/**
 	 * 
@@ -86,6 +86,12 @@ public class Event implements Serializable {
 
 	public void setAttendance(List<EventAttendance> attendance) {
 		this.attendance = attendance;
+	}
+
+	@Override
+	public Json toJson() {
+		// TODO Auto-generated method stub
+		return new EventJson(this);
 	}
 
 

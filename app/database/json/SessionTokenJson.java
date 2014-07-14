@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 
 import database.dto.LoginSession;
 
-public class SessionTokenJson {
+public class SessionTokenJson implements Json {
 
 	private String token;
 
@@ -24,9 +24,10 @@ public class SessionTokenJson {
 	public void setToken(String token) {
 		this.token = token;
 	}
-	
+
+
 	@Override
-	public String toString() {
+	public String toJsonString() {
 		Gson gson = new Gson();
 		return gson.toJson(this);
 	}

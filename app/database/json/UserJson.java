@@ -2,8 +2,10 @@ package database.json;
 
 import java.sql.Timestamp;
 
+import com.google.gson.Gson;
 
-public class UserJson {
+
+public class UserJson implements Json {
 
 	private Integer id;
 	private String email;
@@ -45,7 +47,11 @@ public class UserJson {
 	public void setCreatedTimestamp(Timestamp createdTimestamp) {
 		this.createdTimestamp = createdTimestamp;
 	}
-	
+	@Override
+	public String toJsonString() {
+		Gson gson = new Gson();
+		return gson.toJson(this);
+	}
 	
 	
 }

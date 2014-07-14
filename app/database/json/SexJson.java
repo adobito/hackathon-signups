@@ -2,22 +2,18 @@ package database.json;
 
 import com.google.gson.Gson;
 
-import database.dto.University;
+import database.dto.Sex;
 
-public class UniversityJson implements Json {
-
+public class SexJson implements Json {
 	private Integer id;
 	private String name;
 	
-	
-	public UniversityJson(University university) {
-		this.id = university.getUniversityId();
-		this.name = university.getName();
+	public SexJson(Sex sex) {
+		this.id = sex.getId();
+		this.name = sex.getName();
 	}
-	
-	public UniversityJson(Integer id, String name) {
-		this.id = id;
-		this.name = name;
+	public SexJson() {
+		super();
 	}
 	public Integer getId() {
 		return id;
@@ -36,7 +32,5 @@ public class UniversityJson implements Json {
 		Gson gson = new Gson();
 		return gson.toJson(this);
 	}
-	
-	
 	
 }

@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import database.dto.UserInfo;
 
 
-public class UserInfoJson {
+public class UserInfoJson implements Json {
 	private Integer userId;
 	private String name;
 	private String github;
@@ -81,7 +81,7 @@ public class UserInfoJson {
 	}
 
 	@Override
-	public String toString() {
+	public String toJsonString() {
 		Gson gson = new Gson();
 		return gson.toJson(this);
 	}

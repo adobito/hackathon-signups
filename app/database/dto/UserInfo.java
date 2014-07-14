@@ -16,9 +16,12 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import database.json.Json;
+import database.json.UserInfoJson;
+
 @Entity
 @Table(name = "user_info")
-public class UserInfo implements Serializable{
+public class UserInfo implements Serializable, Jsonable{
 
 	/**
 	 * 
@@ -167,6 +170,11 @@ public class UserInfo implements Serializable{
 
 	public void setSkills(List<Skill> skills) {
 		this.skills = skills;
+	}
+
+	@Override
+	public Json toJson() {
+		return new UserInfoJson(this);
 	}
 
 
