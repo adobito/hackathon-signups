@@ -26,7 +26,7 @@ public class Resume implements Serializable {
 	
 	private Integer resumeId;
 	private String path;
-	private User user;
+	private Credentials user;
 	private Timestamp createdTimestamp;
 	
 	public Resume() {
@@ -53,11 +53,11 @@ public class Resume implements Serializable {
 
 	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
-	public User getUser() {
+	public Credentials getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(Credentials user) {
 		this.user = user;
 	}
 

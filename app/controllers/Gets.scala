@@ -4,24 +4,37 @@ import play.api.mvc.Controller
 import play.api.mvc.Action
 import com.google.gson.Gson
 import database.Dao
-import database.dto.UserInfo
-import database.json.UserInfoJson
 import database.json.SkillJson
 import database.json.UniversityJson
 import database.json.EventJson
+import database.dto.User
 
 object Gets extends Controller {
 	private val gson = new Gson();
 
 	def usersAll = Action {
-		val users = Dao.getUserInfo(0, 20).toArray;
+		val users = Dao.getUsers(0, 20).toArray;
 		Ok(gson.toJson(users));
 	}
 	def users(id: Int) = Action {
-		val userInfoOpt = Dao.getUserInfo(id);
-		val userInfo = userInfoOpt.getOrElse(new UserInfo());
+		request => 
+		try {
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse("token", Seq(""))(0);
+			val sessionOpt = Dao.getLoginSession(token);
+			if(sessionOpt.isEmpty) {
+				throw new Exception("No active session found.");
+			}
+			val userOpt = Dao.getUser(id);
+			val user = userOpt.getOrElse(throw new NoSuchElementException("No user with user_id = " + id));
 
-		Ok(userInfo.toJson().toJsonString()).as("application/json");
+			Ok(user.toJson().toJsonString()).as("application/json");
+
+		}
+		catch {
+		case e: NoSuchElementException => NotFound(e.getMessage());
+		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
+		}
 	}
 	def userSkills(userId: Int) = Action {
 		val skills = Dao.getSkillsByUser(userId);
@@ -37,8 +50,7 @@ object Gets extends Controller {
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse("token", Seq(""))(0);
 			val user = Dao.getLoginSession(token).getOrElse(throw new Exception("BOOM")).getUser();
-			val userInfoJson = new UserInfoJson(user.getUserInfo());
-			Ok(userInfoJson.toString());
+			Ok(user.toJson().toJsonString());
 		}
 		catch {
 		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
@@ -89,17 +101,17 @@ object Gets extends Controller {
 			if(sessionOpt.isEmpty) {
 				throw new Exception("No active session found.");
 			}
-			val event = Dao.getEvent(id).getOrElse(throw new NoSuchElementException("Event not found."));
+			val event = Dao.getEvent(id).getOrElse(throw new NoSuchElementException("Event with event id = " + id + " not found."));
 			Ok(event.toJson().toJsonString()).as("application/json");
 
 		}
 		catch {
-		  case e: NoSuchElementException => NotFound(e.getMessage());
+		case e: NoSuchElementException => NotFound(e.getMessage());
 		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
 		}
 	}
 	def eventAttendees(id:Int) = Action {
-	  NotFound("Nothing here yet.");
+		NotFound("Nothing here yet.");
 	}
 
 }

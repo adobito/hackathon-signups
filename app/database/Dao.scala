@@ -1,12 +1,9 @@
 package database
 
 import java.util.Date
-
 import scala.collection.JavaConverters._
 import scala.collection.mutable.ListBuffer
-
 import org.hibernate.criterion.Restrictions
-
 import cryptography.PasswordHash
 import database.dto.Event
 import database.dto.EventAttendance
@@ -17,7 +14,8 @@ import database.dto.Skill
 import database.dto.SkillCategory
 import database.dto.University
 import database.dto.User
-import database.dto.UserInfo
+import scala.util.Try
+import database.dto.Credentials
 
 object Dao {
 
@@ -26,16 +24,18 @@ object Dao {
 	//Users
 	def getUser(userId: Int): Option[User] = {
 			val session = hibernateService.getCurrentSession(true);
-			val criteria = session.createCriteria(classOf[User]);
-			criteria.add(Restrictions.eq(User.ID, userId));
-			val user = criteria.uniqueResult().asInstanceOf[User];
-			hibernateService.closeSessionIfNecessary(session);
-			Option(user)
+			val criteria = session.createCriteria(classOf[User])
+					.add(Restrictions.eq(User.ID, userId))
+					.setCacheable(true);;
+					val user = criteria.uniqueResult().asInstanceOf[User];
+					hibernateService.closeSessionIfNecessary(session);
+					Option(user)
 	}
 	def getUser(email: String): Option[User] = {
 			val session = hibernateService.getCurrentSession(true);
-			val criteria = session.createCriteria(classOf[User]);
-			criteria.add(Restrictions.eq(User.EMAIL, email));
+			val criteria = session.createCriteria(classOf[User])
+					.add(Restrictions.eq(User.EMAIL, email))
+					.setCacheable(true);
 			val user = criteria.uniqueResult().asInstanceOf[User];
 			hibernateService.closeSessionIfNecessary(session);
 			Option(user)
@@ -50,29 +50,31 @@ object Dao {
 			users;
 	}
 
-	def getUserInfo(userId: Int): Option[UserInfo] = {
-			val session = hibernateService.getCurrentSession(true);
-			val criteria = session.createCriteria(classOf[UserInfo]);
-			criteria.add(Restrictions.eq(UserInfo.USER_ID, userId));
-			val userInfo = criteria.uniqueResult().asInstanceOf[UserInfo];
-			hibernateService.closeSessionIfNecessary(session);
-			Option(userInfo);
-	}
-	def getUserInfo(startingAt: Int, maxAmount: Int): List[UserInfo] = {
-			val session = hibernateService.getCurrentSession(true);
-			val criteria = session.createCriteria(classOf[UserInfo]);
-			criteria.setMaxResults(maxAmount).setFirstResult(startingAt);
-			val usersInfoList = criteria.list();
-			val usersInfo = usersInfoList.asInstanceOf[java.util.List[UserInfo]].asScala.toList;
-			hibernateService.closeSessionIfNecessary(session);
-			usersInfo;
-	}
+	//	def getUserInfo(userId: Int): Option[User] = {
+	//			val session = hibernateService.getCurrentSession(true);
+	//			val criteria = session.createCriteria(classOf[UserInfo]);
+	//			criteria.add(Restrictions.eq(User.USER_ID, userId));
+	//			val User = criteria.uniqueResult().asInstanceOf[UserInfo];
+	//			hibernateService.closeSessionIfNecessary(session);
+	//			Option(userInfo);
+	//	}
+	//	def getUserInfo(startingAt: Int, maxAmount: Int): List[User] = {
+	//			val session = hibernateService.getCurrentSession(true);
+	//			val criteria = session.createCriteria(classOf[UserInfo]);
+	//			criteria.setMaxResults(maxAmount).setFirstResult(startingAt);
+	//			val usersInfoList = criteria.list();
+	//			val usersInfo = usersInfoList.asInstanceOf[java.util.List[UserInfo]].asScala.toList;
+	//			hibernateService.closeSessionIfNecessary(session);
+	//			usersInfo;
+	//	}
+
 
 	//Events
 	def getEvent(eventId: Int): Option[Event] = {
 			val session = hibernateService.getCurrentSession(true);
-			val criteria = session.createCriteria(classOf[Event]);
-			criteria.add(Restrictions.eq(Event.EVENT_ID, eventId));
+			val criteria = session.createCriteria(classOf[Event])
+					.add(Restrictions.eq(Event.EVENT_ID, eventId))
+					.setCacheable(true);
 			val event = criteria.uniqueResult().asInstanceOf[Event];
 			hibernateService.closeSessionIfNecessary(session);
 			Option(event)
@@ -109,13 +111,13 @@ object Dao {
 			eventAttendanceList;
 	}
 	def getEventAttendee(eventId: Int, userId: Int): Option[EventAttendance] = {
-	  val session = hibernateService.getCurrentSession(true);
-	  val criteria = session.createCriteria(classOf[EventAttendance])
-			  .add(Restrictions.eq(EventAttendance.EVENT_ID,eventId))
-			  .add(Restrictions.eq(EventAttendance.USER_ID, userId));
-	  val eventAttendee = criteria.uniqueResult().asInstanceOf[EventAttendance];
-	  hibernateService.closeSessionIfNecessary(session);
-	  Option(eventAttendee);
+			val session = hibernateService.getCurrentSession(true);
+			val criteria = session.createCriteria(classOf[EventAttendance])
+					.add(Restrictions.eq(EventAttendance.EVENT_ID,eventId))
+					.add(Restrictions.eq(EventAttendance.USER_ID, userId));
+			val eventAttendee = criteria.uniqueResult().asInstanceOf[EventAttendance];
+			hibernateService.closeSessionIfNecessary(session);
+			Option(eventAttendee);
 	}
 	//Resumes
 	def getResume(resumeId: Int): Option[Resume] = {
@@ -130,7 +132,8 @@ object Dao {
 	def getLoginSessions(userId: Int): List[LoginSession] = {
 			val session = hibernateService.getCurrentSession(true);
 			val criteria = session.createCriteria(classOf[LoginSession])
-					.add(Restrictions.eq(LoginSession.USER + ".userId", userId));
+					.add(Restrictions.eq(LoginSession.USER + ".userId", userId))
+					.setCacheable(true);
 			val eventAttendanceList = criteria.list().asInstanceOf[java.util.List[LoginSession]].asScala.toList;
 			hibernateService.closeSessionIfNecessary(session);
 			eventAttendanceList;
@@ -142,8 +145,9 @@ object Dao {
 	}
 	def getLoginSession(token: String):Option[LoginSession] = {
 			val session = hibernateService.getCurrentSession(true);
-			val criteria = session.createCriteria(classOf[LoginSession]);
-			criteria.add(Restrictions.eq(LoginSession.TOKEN, token));
+			val criteria = session.createCriteria(classOf[LoginSession])
+			.add(Restrictions.eq(LoginSession.TOKEN, token))
+			.setCacheable(true);
 			val loginSession = criteria.uniqueResult().asInstanceOf[LoginSession];
 			hibernateService.closeSessionIfNecessary(session);
 			Option(loginSession);
@@ -212,7 +216,7 @@ object Dao {
 			skills;
 	}
 	def getSkillsByUser(userId:Int): List[Skill] = {
-			val user = getUserInfo(userId).getOrElse(return List[Skill]());
+			val user = getUser(userId).getOrElse(return List[Skill]());
 			val skills = user.getSkills();
 			return skills.asScala.toList;
 	}
@@ -227,7 +231,7 @@ object Dao {
 	}
 	def login(email: String, password: String): Boolean = {
 			val user = Dao.getUser(email).getOrElse(return false);
-			val passwordsMatch = PasswordHash.validatePassword(password, user.getPassword());
+			val passwordsMatch = PasswordHash.validatePassword(password, user.getCredentials().getPassword());
 			passwordsMatch;
 
 	}
@@ -235,15 +239,16 @@ object Dao {
 			val user = new User();
 			user.setEmail(email);
 			val hashedPassword = PasswordHash.createHash(password);
-			user.setPassword(hashedPassword);
+			val credentials = new Credentials();
+			credentials.setPassword(hashedPassword);
+			user.setCredentials(credentials);
 			val session = hibernateService.getCurrentSession(true);
 			val transaction = session.beginTransaction();
-			val id = session.save(user).toString.toInt;
+			session.save(user);
+			session.save(credentials);
 			transaction.commit();
-			val newUserOpt = getUser(id);
 			hibernateService.closeSessionIfNecessary(session);
-			//some activate user logic
-			newUserOpt;
+			Option(user);
 
 	}
 	def addSessionTokenToUser(userId: Int): Option[LoginSession] = {
@@ -257,7 +262,7 @@ object Dao {
 			session.save(loginSession);
 			transaction.commit();
 			session.close();
-			getLoginSession(sessionToken);
+			Option(loginSession);
 	}
 	def deleteSessionToken(token: String): Boolean = {
 			val loginSession = getLoginSession(token).getOrElse(return false);
@@ -287,28 +292,26 @@ object Dao {
 			val id = session.save(event);
 			transaction.commit();
 			session.close();
-			getEvent(id.toString.toInt);
+			//			getEvent(id.toString.toInt);
+			Option(event);
 	}
 	def attendEvent(eventId: Int, userId: Int): Option[EventAttendance]  = {
+
 			val user = getUser(userId).getOrElse(return None);
 			val event = getEvent(eventId).getOrElse(return None);
-			val userInfo = user.getUserInfo();
 			val eventAttendee = new EventAttendance();
 			eventAttendee.setEvent(event);
 			eventAttendee.setUser(user);
-			eventAttendee.setName(userInfo.getName());
-			eventAttendee.setGithub(userInfo.getGithub());
-			eventAttendee.setLinekdIn(userInfo.getLinkedin());
-			eventAttendee.setResume(userInfo.getResume());
-			eventAttendee.setSex(userInfo.getSex());
-			eventAttendee.setShirtSize(userInfo.getShirtSize());
-			eventAttendee.setUniversity(userInfo.getUniversity());
 			val session = hibernateService.getCurrentSession(true);
-			val transaction = session.beginTransaction();
-			session.save(eventAttendee);
-			transaction.commit();
-			session.close();
-			getEventAttendee(eventId, userId);
+			try {
+				val transaction = session.beginTransaction();
+				session.save(eventAttendee);
+				transaction.commit();
+				Option(eventAttendee);
+			}
+			finally {
+				session.close();
+			}
 	}
 
 

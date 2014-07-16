@@ -12,7 +12,7 @@ GET		/users/$id<[0-9]+>/skills	controllers.Gets.userSkills(id: Int)
 #GET		/events						controllers.Gets.events
 GET		/events/$id<[0-9]+>			controllers.Gets.event(id: Int)
 GET		/events/$id<[0-9]+>/users	controllers.Gets.eventAttendees(id: Int)
-GET		/university					controllers.Gets.universities
+GET		/universities				controllers.Gets.universities
 
 
 #Posts

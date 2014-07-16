@@ -1,29 +1,57 @@
 package database.json;
 
-import java.sql.Timestamp;
-
 import com.google.gson.Gson;
+
+import database.dto.User;
 
 
 public class UserJson implements Json {
-
-	private Integer id;
+	private Integer userId;
+	private String name;
 	private String email;
-	private String password;
-	private Timestamp createdTimestamp;
-	
+	private String github;
+	private String linkedin;
+	private String twitter;
+	private String resumePath;
+	private String sex;
+	private String shirtSize;
+
+
 	public UserJson() {
-		super();
 	}
 
-	public Integer getId() {
-		return id;
+	public UserJson(User user) {
+		if(user != null) {
+			this.userId = user.getUserId();
+			this.name = user.getName();
+			this.email = user.getEmail();
+			this.github = user.getGithub();
+			this.linkedin = user.getLinkedin();
+			this.twitter = user.getTwitter();
+			if(user.getResume() != null) {
+				this.resumePath = user.getResume().getPath();
+			}
+			if(user.getSex() != null) {
+				this.sex = user.getSex().getName();
+			}
+			if(user.getShirtSize() != null) {
+				this.shirtSize = user.getShirtSize().getName();
+			}
+		}
 	}
-
-	public void setId(Integer id) {
-		this.id = id;
+	public Integer getUserId() {
+		return userId;
 	}
-
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 	public String getEmail() {
 		return email;
 	}
@@ -32,26 +60,51 @@ public class UserJson implements Json {
 		this.email = email;
 	}
 
-	public String getPassword() {
-		return password;
+	public String getGithub() {
+		return github;
+	}
+	public void setGithub(String github) {
+		this.github = github;
+	}
+	public String getLinkedin() {
+		return linkedin;
+	}
+	public void setLinkedin(String linkedin) {
+		this.linkedin = linkedin;
+	}
+	
+	public String getTwitter() {
+		return twitter;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setTwitter(String twitter) {
+		this.twitter = twitter;
 	}
 
-	public Timestamp getCreatedTimestamp() {
-		return createdTimestamp;
+	public String getResumePath() {
+		return resumePath;
+	}
+	public void setResumePath(String resumePath) {
+		this.resumePath = resumePath;
+	}
+	public String getSex() {
+		return sex;
+	}
+	public void setSex(String sex) {
+		this.sex = sex;
+	}
+	public String getShirtSize() {
+		return shirtSize;
+	}
+	public void setShirtSize(String shirtSize) {
+		this.shirtSize = shirtSize;
 	}
 
-	public void setCreatedTimestamp(Timestamp createdTimestamp) {
-		this.createdTimestamp = createdTimestamp;
-	}
 	@Override
 	public String toJsonString() {
 		Gson gson = new Gson();
 		return gson.toJson(this);
 	}
-	
-	
+
+
 }

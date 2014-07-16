@@ -21,7 +21,7 @@ public class UserSkill implements Serializable{
 	public static final String USER_ID = "user." + User.ID;
 	public static final String SKILL = "skill";
 	public static final String SKILL_ID = "skill." + Skill.ID;
-	private User user;
+	private Credentials user;
 	private Skill skill;
 	
 	public UserSkill() {
@@ -30,11 +30,11 @@ public class UserSkill implements Serializable{
 	@Id
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id")
-	public User getUser() {
+	public Credentials getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(Credentials user) {
 		this.user = user;
 	}
 	@Id

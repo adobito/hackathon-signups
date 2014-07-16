@@ -20,9 +20,7 @@ public class HibernateService {
 			
 			Session newSession = sessionFactory.openSession();
 			session.set(newSession);
-			System.out.println("New Session Made.");
 		}
-		System.out.println("Session returned.");
 		return session.get();
 	}
 	public void closeSessionIfNecessary(Session session) {
