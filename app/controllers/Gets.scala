@@ -8,6 +8,8 @@ import database.json.SkillJson
 import database.json.UniversityJson
 import database.json.EventJson
 import database.dto.User
+import database.json.SexJson
+import database.dto.Sex
 
 object Gets extends Controller {
 	private val gson = new Gson();
@@ -112,6 +114,46 @@ object Gets extends Controller {
 	}
 	def eventAttendees(id:Int) = Action {
 		NotFound("Nothing here yet.");
+	}
+	def permissionsGroups(userId: Int) = Action {
+		request => 
+		try {
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse("token", Seq(""))(0);
+			val sessionOpt = Dao.getLoginSession(token);
+			if(sessionOpt.isEmpty) {
+				throw new Exception("No active session found.");
+			}
+			val user = Dao.getUser(userId).getOrElse(throw new NoSuchElementException("No used with user id = " + userId));
+			val permissions = Dao.getPermissionsGroups(userId);
+			Ok(gson.toJson(permissions.toArray)).as("application/json");
+
+		}
+		catch {
+		case e: NoSuchElementException => NotFound(e.getMessage());
+		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
+		}
+	}
+	def sexes = Action {
+		request => 
+		try {
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse("token", Seq(""))(0);
+			val sessionOpt = Dao.getLoginSession(token);
+			if(sessionOpt.isEmpty) {
+				throw new Exception("No active session found."); // should say authenticate
+			}
+			val sexes: List[Sex] = Dao.getSexes();
+			val sexesArr = new Array[SexJson](sexes.size);
+			for(i <- 0 until sexesArr.size) {
+				sexesArr(i) = sexes(i).toJson().asInstanceOf[SexJson];
+			}
+			Ok(gson.toJson(sexesArr)).as("application/json");
+
+		}
+		catch {
+		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
+		}
 	}
 
 }

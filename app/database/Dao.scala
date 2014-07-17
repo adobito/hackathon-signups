@@ -16,6 +16,7 @@ import database.dto.University
 import database.dto.User
 import scala.util.Try
 import database.dto.Credentials
+import database.dto.PermissionsGroup
 
 object Dao {
 
@@ -114,7 +115,8 @@ object Dao {
 			val session = hibernateService.getCurrentSession(true);
 			val criteria = session.createCriteria(classOf[EventAttendance])
 					.add(Restrictions.eq(EventAttendance.EVENT_ID,eventId))
-					.add(Restrictions.eq(EventAttendance.USER_ID, userId));
+					.add(Restrictions.eq(EventAttendance.USER_ID, userId))
+					.setCacheable(true);
 			val eventAttendee = criteria.uniqueResult().asInstanceOf[EventAttendance];
 			hibernateService.closeSessionIfNecessary(session);
 			Option(eventAttendee);
@@ -312,6 +314,13 @@ object Dao {
 			finally {
 				session.close();
 			}
+	}
+	//
+	def getPermissionsGroups(userId: Int): List[PermissionsGroup] = {
+	  val user = getUser(userId).getOrElse( return Nil);
+	  val permissionsGroupsList = user.getPermissionsGroups().asScala.toList;
+	  permissionsGroupsList;
+	  
 	}
 
 

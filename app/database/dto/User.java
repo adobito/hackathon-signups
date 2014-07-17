@@ -66,6 +66,7 @@ public class User implements Serializable, Jsonable{
 	private List<Resume> resumes;
 	private List<EventAttendance> eventAttendances;
 	private List<Skill> skills;
+	private List<PermissionsGroup> permissionsGroups;
 
 
 
@@ -233,6 +234,18 @@ public class User implements Serializable, Jsonable{
 
 	public void setCredentials(Credentials credentials) {
 		this.credentials = credentials;
+	}
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinTable(name = "permission_groups_to_users_mappings", joinColumns = { 
+			@JoinColumn(name = "user_id", nullable = false, updatable = false) }, 
+			inverseJoinColumns = { @JoinColumn(name = "permissions_groups_id", 
+			nullable = false, updatable = false) })
+	public List<PermissionsGroup> getPermissionsGroups() {
+		return permissionsGroups;
+	}
+
+	public void setPermissionsGroups(List<PermissionsGroup> permissionsGroups) {
+		this.permissionsGroups = permissionsGroups;
 	}
 
 	@Override

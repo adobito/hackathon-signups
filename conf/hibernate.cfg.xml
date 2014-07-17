@@ -14,7 +14,7 @@
 		<property name="hibernate.cache.use_second_level_cache">true</property>
 		<property name="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</property>
 		<property name="hibernate.generate_statistics">true</property>
-		 <property name="hibernate.cache.use_query_cache">true</property>
+		
 
 		<property name="hibernate.c3p0.min_size">5</property>
 		<property name="hibernate.c3p0.max_size">20</property>
@@ -35,6 +35,8 @@
 		<mapping class="database.dto.Skill" />
 		<mapping class="database.dto.SkillCategory" />
 		<mapping class="database.dto.UserSkill" />
+		<mapping class="database.dto.PermissionsGroup" />
+		<mapping class="database.dto.Permission" />
 
 
 	</session-factory>

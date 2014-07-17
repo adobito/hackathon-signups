@@ -1,19 +1,16 @@
 package controllers
 
-import play.api.mvc.Controller
-import play.api.mvc.Action
-import database.Database
-import com.google.gson.Gson
-import database.json.UserJson
-import cryptography.PasswordHash
-import database.dto.LoginSession
 import java.util.NoSuchElementException
+import com.google.gson.Gson
 import database.Dao
-import database.json.SessionTokenJson
+import database.dto.Event
+import database.dto.LoginSession
 import database.dto.User
 import database.json.EventJson
-import database.dto.Event
 import database.json.RegisterJson
+import play.api.mvc.Action
+import play.api.mvc.Controller
+import play.api.mvc.Results
 
 object Posts extends Controller {
 
@@ -41,7 +38,7 @@ object Posts extends Controller {
 		}
 		catch {
 		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
-//		case e: Exception => { InternalServerError("Something went wrong...") }
+		case e: Exception => { InternalServerError("Something went wrong...") }
 		}
 
 	}
@@ -63,7 +60,7 @@ object Posts extends Controller {
 			}
 			Dao.register(userJson.getEmail(), userJson.getPassword()).getOrElse(throw new Exception()); //need to manage this
 
-			Created("");
+			Created(""); //send token?
 		}
 		catch {
 		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
@@ -94,12 +91,17 @@ object Posts extends Controller {
 			val session = Dao.getLoginSession(token).getOrElse(throw new Exception("Forbidden. Must Auth.")); //must fix
 			val user = session.getUser();
 			val event = Dao.getEvent(eventId).getOrElse(throw new NoSuchElementException("No event found."));
+			val attendingOpt = Dao.getEventAttendee(eventId, user.getUserId());
+			if(attendingOpt.isDefined) {
+				throw new IndexOutOfBoundsException("Already attending this event.");
+			}
 			val eventAttendance = Dao.attendEvent(event.getEventId(), user.getUserId());
-			Ok("").as("application/json"); //don't know what to send
+			NoContent;
 		}
 		catch {
+		case e: IndexOutOfBoundsException => { Conflict };
 		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
-		case e: Exception => { InternalServerError("Something went wrong...") }
+		case e: Exception => { InternalServerError("Something went wrong...") };
 		}
 	}
 

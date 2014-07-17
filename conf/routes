@@ -3,28 +3,31 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
-GET		/users						controllers.Gets.usersAll
-GET		/users/$id<[0-9]+>			controllers.Gets.users(id: Int)
-GET		/users/me					controllers.Gets.userMe
-GET		/logout						controllers.Gets.logout
-GET		/users/$id<[0-9]+>/skills	controllers.Gets.userSkills(id: Int)
+GET     /                          		controllers.Application.index
+GET		/users							controllers.Gets.usersAll
+GET		/users/$id<[0-9]+>				controllers.Gets.users(id: Int)
+GET		/users/me						controllers.Gets.userMe
+GET		/logout							controllers.Gets.logout
+GET		/users/$id<[0-9]+>/skills		controllers.Gets.userSkills(id: Int)
+GET		/users/$id<[0-9]+>/permissions	controllers.Gets.permissionsGroups(id: Int) 
 #GET		/events						controllers.Gets.events
-GET		/events/$id<[0-9]+>			controllers.Gets.event(id: Int)
-GET		/events/$id<[0-9]+>/users	controllers.Gets.eventAttendees(id: Int)
-GET		/universities				controllers.Gets.universities
+GET		/events/$id<[0-9]+>				controllers.Gets.event(id: Int)
+GET		/events/$id<[0-9]+>/users		controllers.Gets.eventAttendees(id: Int)
+GET		/universities					controllers.Gets.universities
+#GET		/sexes							controllers.Gets.sexes
 
 
 #Posts
-POST	/login						controllers.Posts.login
-POST	/register					controllers.Posts.register
-POST	/events						controllers.Posts.newEvent
-POST	/events/$id<[0-9]+>/attend	controllers.Posts.attendEvent(id: Int)
+POST	/login							controllers.Posts.login
+POST	/register						controllers.Posts.register
+POST	/events							controllers.Posts.newEvent
+POST	/events/$id<[0-9]+>/attend		controllers.Posts.attendEvent(id: Int)
 
 #Puts
-PUT 	/users/$id<[0-9]+>			controllers.Puts.users(id: Int)
+#must change to posts
+PUT 	/users/$id<[0-9]+>				controllers.Puts.users(id: Int) 
 
 #Deletes
-DELETE  /users/$id<[0-9]+>			controllers.Deletes.users(id: Int)
+DELETE  /users/$id<[0-9]+>				controllers.Deletes.users(id: Int)
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /assets/*file               	controllers.Assets.at(path="/public", file)
