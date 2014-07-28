@@ -37,6 +37,7 @@
 		<mapping class="database.dto.UserSkill" />
 		<mapping class="database.dto.PermissionsGroup" />
 		<mapping class="database.dto.Permission" />
+		<mapping class="database.dto.PasswordRecoveryHash" />
 
 
 	</session-factory>

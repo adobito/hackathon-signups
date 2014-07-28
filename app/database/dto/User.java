@@ -88,6 +88,8 @@ public class User implements Serializable, Jsonable{
 		this.eventAttendances = null;
 		this.skills = null;
 	}
+	
+
 
 	@Id
 	@GeneratedValue

@@ -2,16 +2,22 @@ package database.dto;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import database.json.Json;
 import database.json.UniversityJson;
 
 
 @Entity
+@Cacheable
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE, region = "events") 
 @Table(name = "university")
 public class University implements Serializable, Jsonable{
 
@@ -27,7 +33,6 @@ public class University implements Serializable, Jsonable{
 	private String name;
 
 	public University() {
-		// TODO Auto-generated constructozr stub
 	}
 
 	@Id

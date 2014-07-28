@@ -1,16 +1,16 @@
 package controllers
 
 import java.util.NoSuchElementException
+
 import com.google.gson.Gson
+
 import database.Dao
-import database.dto.Event
-import database.dto.LoginSession
-import database.dto.User
 import database.json.EventJson
 import database.json.RegisterJson
+import database.json.UserJson
+import javax.security.sasl.AuthenticationException
 import play.api.mvc.Action
 import play.api.mvc.Controller
-import play.api.mvc.Results
 
 object Posts extends Controller {
 
@@ -34,7 +34,7 @@ object Posts extends Controller {
 			}
 			val user = Dao.getUser(userJson.getEmail()).getOrElse(throw new NoSuchElementException("User " + userJson.getEmail() + " not found."));
 			val loginSession = Dao.addSessionTokenToUser(user.getUserId()).getOrElse(throw new NoSuchElementException("")); //this needs to get fixed
-			Ok(loginSession.toJson().toJsonString()).as("application/json");
+			NoContent;
 		}
 		catch {
 		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
@@ -104,5 +104,79 @@ object Posts extends Controller {
 		case e: Exception => { InternalServerError("Something went wrong...") };
 		}
 	}
+	def updatePassword = Action {
+		request => 
+		try {
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse("token", Seq(""))(0);
+			val json = request.body.asJson.getOrElse(throw new NoSuchElementException("No JSON body supplied."));
+			val gson = new Gson();
+			val userJson: RegisterJson = gson.fromJson(json.toString, classOf[RegisterJson]);
+			val oldPassword = userJson.getPassword();
+			val session = Dao.getLoginSession(token).getOrElse(throw new AuthenticationException("No valid session supplied.")); 
+			val user = session.getUser();
+			val loginSuccessful = Dao.login(user.getEmail(), oldPassword);
+			if(!loginSuccessful) {
+				throw new AuthenticationException("Passwords don't match.")
+			}
+
+			NoContent;
+		}
+		catch {
+		case e: AuthenticationException => { Unauthorized(e.getMessage()) };
+		case e: IndexOutOfBoundsException => { Conflict };
+		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
+		case e: Exception => { InternalServerError("Something went wrong...") };
+		}
+
+	}
+	def uploadResume = Action {
+	  NoContent;
+	}
+	
+	  def users(id: Int) = Action {
+	    request => 
+	  try {
+			val headersMap = request.headers.toMap;
+			val json = request.body.asJson.getOrElse(throw new NoSuchElementException("No JSON body supplied."));
+			val gson = new Gson();
+			val userJson: UserJson = gson.fromJson(json.toString, classOf[UserJson]);
+			val user = Dao.getUser(userJson.getUserId()).getOrElse(throw new NoSuchElementException());
+			//mutate user object here
+			Dao.updateUser(user);
+			NoContent;
+		}
+		catch {
+		case e: AuthenticationException => { Unauthorized(e.getMessage()) };
+		case e: IndexOutOfBoundsException => { Conflict };
+		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
+		case e: Exception => { InternalServerError("Something went wrong...") };
+		}
+    
+  }
+//	def recoverPassword = Action {
+//	  request => 
+//	  try {
+//			val headersMap = request.headers.toMap;
+//			val json = request.body.asJson.getOrElse(throw new NoSuchElementException("No JSON body supplied."));
+//			val gson = new Gson();
+//			val userJson: RegisterJson = gson.fromJson(json.toString, classOf[RegisterJson]);
+//			val oldPassword = userJson.getPassword();
+//			val user = Dao.getUser(userJson.getEmail()).getOrElse(throw new NoSuchElementException());
+//			val credentials = user.get
+//			val loginSuccessful = Dao.login(user.getEmail(), oldPassword);
+//			if(!loginSuccessful) {
+//				throw new AuthenticationException("Passwords don't match.")
+//			}
+//
+//			NoContent;
+//		}
+//		catch {
+//		case e: AuthenticationException => { Unauthorized(e.getMessage()) };
+//		case e: IndexOutOfBoundsException => { Conflict };
+//		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
+//		case e: Exception => { InternalServerError("Something went wrong...") };
+//		}
+//	}
 
 }

@@ -14,7 +14,8 @@ GET		/users/$id<[0-9]+>/permissions	controllers.Gets.permissionsGroups(id: Int)
 GET		/events/$id<[0-9]+>				controllers.Gets.event(id: Int)
 GET		/events/$id<[0-9]+>/users		controllers.Gets.eventAttendees(id: Int)
 GET		/universities					controllers.Gets.universities
-#GET		/sexes							controllers.Gets.sexes
+GET		/sexes							controllers.Gets.sexes
+GET		/shirts							controllers.Gets.shirts
 
 
 #Posts
@@ -22,10 +23,11 @@ POST	/login							controllers.Posts.login
 POST	/register						controllers.Posts.register
 POST	/events							controllers.Posts.newEvent
 POST	/events/$id<[0-9]+>/attend		controllers.Posts.attendEvent(id: Int)
+POST 	/users/$id<[0-9]+>				controllers.Posts.users(id: Int)
 
 #Puts
 #must change to posts
-PUT 	/users/$id<[0-9]+>				controllers.Puts.users(id: Int) 
+ 
 
 #Deletes
 DELETE  /users/$id<[0-9]+>				controllers.Deletes.users(id: Int)

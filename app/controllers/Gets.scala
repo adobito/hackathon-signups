@@ -1,15 +1,18 @@
 package controllers
 
-import play.api.mvc.Controller
-import play.api.mvc.Action
 import com.google.gson.Gson
+
 import database.Dao
+import database.dao.ShirtSizeDao
+import database.dao.UserDao
+import database.dto.Sex
+import database.dto.ShirtSize
+import database.json.SexJson
+import database.json.ShirtSizeJson
 import database.json.SkillJson
 import database.json.UniversityJson
-import database.json.EventJson
-import database.dto.User
-import database.json.SexJson
-import database.dto.Sex
+import play.api.mvc.Action
+import play.api.mvc.Controller
 
 object Gets extends Controller {
 	private val gson = new Gson();
@@ -23,7 +26,7 @@ object Gets extends Controller {
 		try {
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse("token", Seq(""))(0);
-			val sessionOpt = Dao.getLoginSession(token);
+			val sessionOpt = UserDao.getLoginSession(token);
 			if(sessionOpt.isEmpty) {
 				throw new Exception("No active session found.");
 			}
@@ -51,7 +54,7 @@ object Gets extends Controller {
 		try {
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse("token", Seq(""))(0);
-			val user = Dao.getLoginSession(token).getOrElse(throw new Exception("BOOM")).getUser();
+			val user = UserDao.getLoginSession(token).getOrElse(throw new Exception("BOOM")).getUser();
 			Ok(user.toJson().toJsonString());
 		}
 		catch {
@@ -63,7 +66,7 @@ object Gets extends Controller {
 		try {
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse("token", Seq(""))(0);
-			val loginSessionOpt = Dao.getLoginSession(token);
+			val loginSessionOpt = UserDao.getLoginSession(token);
 			if(loginSessionOpt.isDefined) {
 				Dao.deleteSessionToken(loginSessionOpt.get.getToken());
 			}
@@ -78,7 +81,7 @@ object Gets extends Controller {
 		try {
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse("token", Seq(""))(0);
-			val sessionOpt = Dao.getLoginSession(token);
+			val sessionOpt = UserDao.getLoginSession(token);
 			if(sessionOpt.isEmpty) {
 				throw new Exception("No active session found.");
 			}
@@ -99,7 +102,7 @@ object Gets extends Controller {
 		try {
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse("token", Seq(""))(0);
-			val sessionOpt = Dao.getLoginSession(token);
+			val sessionOpt = UserDao.getLoginSession(token);
 			if(sessionOpt.isEmpty) {
 				throw new Exception("No active session found.");
 			}
@@ -124,7 +127,7 @@ object Gets extends Controller {
 			if(sessionOpt.isEmpty) {
 				throw new Exception("No active session found.");
 			}
-			val user = Dao.getUser(userId).getOrElse(throw new NoSuchElementException("No used with user id = " + userId));
+			val user = UserDao.getUser(userId).getOrElse(throw new NoSuchElementException("No used with user id = " + userId));
 			val permissions = Dao.getPermissionsGroups(userId);
 			Ok(gson.toJson(permissions.toArray)).as("application/json");
 
@@ -139,7 +142,7 @@ object Gets extends Controller {
 		try {
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse("token", Seq(""))(0);
-			val sessionOpt = Dao.getLoginSession(token);
+			val sessionOpt = UserDao.getLoginSession(token);
 			if(sessionOpt.isEmpty) {
 				throw new Exception("No active session found."); // should say authenticate
 			}
@@ -155,5 +158,27 @@ object Gets extends Controller {
 		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
 		}
 	}
+	def shirts = Action {
+	  		request => 
+		try {
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse("token", Seq(""))(0);
+			val sessionOpt = UserDao.getLoginSession(token);
+			if(sessionOpt.isEmpty) {
+				throw new Exception("No active session found."); // should say authenticate
+			}
+			val shirts: List[ShirtSize] = ShirtSizeDao.getShirtSizes();
+			val shirtsArr = new Array[ShirtSizeJson](shirts.size);
+			for(i <- 0 until shirtsArr.size) {
+				shirtsArr(i) = shirts(i).toJson().asInstanceOf[ShirtSizeJson];
+			}
+			Ok(gson.toJson(shirtsArr)).as("application/json");
+
+		}
+		catch {
+		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
+		}
+	}
+	
 
 }

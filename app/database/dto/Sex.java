@@ -1,14 +1,20 @@
 package database.dto;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 import database.json.Json;
 import database.json.SexJson;
 
 @Entity
+@Cacheable
+@Cache(usage=CacheConcurrencyStrategy.READ_WRITE, region = "events") 
 @Table(name = "sex")
 public class Sex implements Jsonable {
 

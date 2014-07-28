@@ -17,6 +17,8 @@ import database.dto.User
 import scala.util.Try
 import database.dto.Credentials
 import database.dto.PermissionsGroup
+import database.dto.ShirtSize
+import org.hibernate.Transaction
 
 object Dao {
 
@@ -43,12 +45,20 @@ object Dao {
 	}
 	def getUsers(startingAt: Int, maxAmount: Int): List[User] = {
 			val session = hibernateService.getCurrentSession(true);
-			val criteria = session.createCriteria(classOf[User]);
-			criteria.setMaxResults(maxAmount).setFirstResult(startingAt);
+			val criteria = session.createCriteria(classOf[User])
+		  .setMaxResults(maxAmount)
+		  .setFirstResult(startingAt);
 			val usersList = criteria.list();
 			val users = usersList.asInstanceOf[java.util.List[User]].asScala.toList;
 			hibernateService.closeSessionIfNecessary(session);
 			users;
+	}
+	def updateUser(user: User) {
+		val session = hibernateService.getCurrentSession(true);
+		val transaction = session.beginTransaction();
+		session.update(user);
+		transaction.commit();
+		hibernateService.closeSessionIfNecessary(session);
 	}
 
 	//	def getUserInfo(userId: Int): Option[User] = {
@@ -148,8 +158,8 @@ object Dao {
 	def getLoginSession(token: String):Option[LoginSession] = {
 			val session = hibernateService.getCurrentSession(true);
 			val criteria = session.createCriteria(classOf[LoginSession])
-			.add(Restrictions.eq(LoginSession.TOKEN, token))
-			.setCacheable(true);
+					.add(Restrictions.eq(LoginSession.TOKEN, token))
+					.setCacheable(true);
 			val loginSession = criteria.uniqueResult().asInstanceOf[LoginSession];
 			hibernateService.closeSessionIfNecessary(session);
 			Option(loginSession);
@@ -173,15 +183,17 @@ object Dao {
 	//Sex
 	def getSexes(): List[Sex] = {
 			val session = hibernateService.getCurrentSession(true);
-			val criteria = session.createCriteria(classOf[University]);
-			val sexes = criteria.list().asInstanceOf[java.util.List[Sex]].asScala.toList;
+			val criteria = session.createCriteria(classOf[Sex])
+					.setCacheable(true);
+			val sexes = criteria.list().asInstanceOf[java.util.List[Sex]].asScala.toList.sortBy(x => x.getId());
 			hibernateService.closeSessionIfNecessary(session);
 			sexes;
 	}
 	def getSex(id: Int): Option[Sex] = {
 			val session = hibernateService.getCurrentSession(true);
 			val criteria = session.createCriteria(classOf[University])
-					.add(Restrictions.eq(Sex.ID,id));
+					.add(Restrictions.eq(Sex.ID,id))
+					.setCacheable(true);
 			val sex = criteria.uniqueResult().asInstanceOf[Sex];
 			hibernateService.closeSessionIfNecessary(session);
 			Option(sex);
@@ -317,11 +329,40 @@ object Dao {
 	}
 	//
 	def getPermissionsGroups(userId: Int): List[PermissionsGroup] = {
-	  val user = getUser(userId).getOrElse( return Nil);
-	  val permissionsGroupsList = user.getPermissionsGroups().asScala.toList;
-	  permissionsGroupsList;
-	  
+			val user = getUser(userId).getOrElse( return Nil);
+			val permissionsGroupsList = user.getPermissionsGroups().asScala.toList;
+			permissionsGroupsList;
+
 	}
+	//
+	def getShirtSizes: List[ShirtSize] = {
+			val session = hibernateService.getCurrentSession(true);
+			val criteria = session.createCriteria(classOf[ShirtSize])
+					.setCacheable(true);
+			val shirtSizes = criteria.list().asInstanceOf[java.util.List[ShirtSize]].asScala.toList.sortBy(x => x.getId());
+			hibernateService.closeSessionIfNecessary(session);
+			shirtSizes;
+	}
+	def getShirtSize(id: Int): Option[ShirtSize] = {
+			val session = hibernateService.getCurrentSession(true);
+			val criteria = session.createCriteria(classOf[ShirtSize])
+					.setCacheable(true);
+			val shirtSize = criteria.uniqueResult().asInstanceOf[ShirtSize];
+			hibernateService.closeSessionIfNecessary(session);
+			Option(shirtSize);
+	}
+	def changePassword(userId: Int, newPassword: String): Boolean = {
+			val user = getUser(userId).getOrElse(return false);
+			val credentials = user.getCredentials();
+			credentials.setPassword(PasswordHash.createHash(newPassword));
+			val session = hibernateService.getCurrentSession(true);
+			val transaction = session.beginTransaction();
+			session.update(credentials);
+			transaction.commit();
+			session.close();
+			true;
+	}
+
 
 
 }	
