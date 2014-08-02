@@ -1,7 +1,6 @@
 package controllers
 
 import com.google.gson.Gson
-
 import database.Dao
 import database.dao.ShirtSizeDao
 import database.dao.UserDao
@@ -13,6 +12,9 @@ import database.json.SkillJson
 import database.json.UniversityJson
 import play.api.mvc.Action
 import play.api.mvc.Controller
+import java.util.Date
+import database.dao.EventDao
+import utils.JsonUtils
 
 object Gets extends Controller {
 	private val gson = new Gson();
@@ -34,6 +36,26 @@ object Gets extends Controller {
 			val user = userOpt.getOrElse(throw new NoSuchElementException("No user with user_id = " + id));
 
 			Ok(user.toJson().toJsonString()).as("application/json");
+
+		}
+		catch {
+		case e: NoSuchElementException => NotFound(e.getMessage());
+		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
+		}
+	}
+		def events = Action {
+		request => 
+		try {
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse("token", Seq(""))(0);
+			val sessionOpt = UserDao.getLoginSession(token);
+			if(sessionOpt.isEmpty) {
+				throw new Exception("No active session found.");
+			}
+			val now = new Date();
+			val eventsList = EventDao.getEventsEndingAfter(now,0,20);
+			val array = JsonUtils.jsonableListToJsonArray(eventsList);
+			Ok(JsonUtils.toJsonString(array)).as("application/json");
 
 		}
 		catch {

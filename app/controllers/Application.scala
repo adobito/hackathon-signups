@@ -14,6 +14,6 @@ import com.google.gson.Gson
 
 object Application extends Controller {
 	def index = Action {
-	  Ok(views.html.index("Your new application is ready."));
+	  Ok("Your new application is ready.");
 	}
 }

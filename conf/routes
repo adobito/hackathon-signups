@@ -10,7 +10,7 @@ GET		/users/me						controllers.Gets.userMe
 GET		/logout							controllers.Gets.logout
 GET		/users/$id<[0-9]+>/skills		controllers.Gets.userSkills(id: Int)
 GET		/users/$id<[0-9]+>/permissions	controllers.Gets.permissionsGroups(id: Int) 
-#GET		/events						controllers.Gets.events
+GET		/events							controllers.Gets.events
 GET		/events/$id<[0-9]+>				controllers.Gets.event(id: Int)
 GET		/events/$id<[0-9]+>/users		controllers.Gets.eventAttendees(id: Int)
 GET		/universities					controllers.Gets.universities

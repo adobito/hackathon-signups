@@ -8,8 +8,14 @@ import scala.collection.JavaConversions._
 
 object SexDao {
   private val hibernateService = Database.HibernateService; 
-  def getSex(shortName: String): Option[Sex] = {
-    None;
+  def getSex(name: String): Option[Sex] = {
+    			val session = hibernateService.getCurrentSession(true);
+			val criteria = session.createCriteria(classOf[University])
+					.add(Restrictions.eq(Sex.NAME,name))
+					.setCacheable(true);
+			val sex = criteria.uniqueResult().asInstanceOf[Sex];
+			hibernateService.closeSessionIfNecessary(session);
+			Option(sex);
   };
   	def getSexes(): List[Sex] = {
 			val session = hibernateService.getCurrentSession(true);

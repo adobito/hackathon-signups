@@ -56,6 +56,7 @@ public class User implements Serializable, Jsonable{
 	private String github;
 	private String linkedin;
 	private String twitter;
+	private String website;
 	private Resume resume;
 	private University university;
 	private Sex sex;
@@ -141,12 +142,21 @@ public class User implements Serializable, Jsonable{
 		this.linkedin = linkedin;
 	}
 	
+	@Column(name = "twitter")
 	public String getTwitter() {
 		return twitter;
 	}
 
 	public void setTwitter(String twitter) {
 		this.twitter = twitter;
+	}
+	@Column(name = "website")
+	public String getWebsite() {
+		return website;
+	}
+
+	public void setWebsite(String website) {
+		this.website = website;
 	}
 
 	@OneToOne(fetch = FetchType.LAZY)

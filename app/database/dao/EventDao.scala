@@ -1,20 +1,39 @@
 package database.dao
 
-import com.google.common.cache.CacheBuilder
-import com.google.common.cache.CacheLoader
-import database.dto.Event
-import database.Database
-import database.HibernateService
-import org.hibernate.criterion.Restrictions
-import com.google.common.cache.LoadingCache
 import java.util.Date
+
+import scala.collection.JavaConversions.asScalaBuffer
+
+import org.hibernate.criterion.Restrictions
+
+import database.Database
+import database.dto.Event
 import database.dto.EventAttendance
 import database.dto.User
-import scala.collection.JavaConversions._
 
 object EventDao {
   private val hibernateService = Database.HibernateService;
   
+  def getEventsEndingAfter(date: Date, startingAt: Int, maxResults: Int): List[Event] = {
+    	val session = hibernateService.getCurrentSession(true);
+			val criteria = session.createCriteria(classOf[Event])
+					.add(Restrictions.gt(Event.END_TIME, date))
+					.setMaxResults(maxResults)
+					.setFirstResult(startingAt)
+					.setCacheable(true);
+			val events = criteria.list().toList.asInstanceOf[List[Event]];
+			hibernateService.closeSessionIfNecessary(session);
+			events;
+  }
+    def getEventsStartingBefore(date: Date): List[Event] = {
+    	val session = hibernateService.getCurrentSession(true);
+			val criteria = session.createCriteria(classOf[Event])
+					.add(Restrictions.lt(Event.START_TIME, date))
+					.setCacheable(true);
+			val events = criteria.list().asInstanceOf[List[Event]];
+			hibernateService.closeSessionIfNecessary(session);
+			events;
+  }
 	def getEvent(eventId: Int): Option[Event] = {
 			val session = hibernateService.getCurrentSession(true);
 			val criteria = session.createCriteria(classOf[Event])
@@ -46,11 +65,12 @@ object EventDao {
 	def getEventAttendee(event: Event, user: User): Option[EventAttendance] = {
 			getEventAttendee(event.getEventId(), user.getUserId());
 	}
-	def addEvent(name: String, startTime: Date, endTime: Date): Option[Event] = {
+	def addEvent(name: String, startTime: Date, endTime: Date, user: User): Option[Event] = {
 			val event = new Event();
 			event.setName(name);
 			event.setStartTime(startTime);
 			event.setEndTime(endTime);
+			event.setEventOwner(user);
 			addEvent(event);
 	}
 	def addEvent(event: Event): Option[Event] = {

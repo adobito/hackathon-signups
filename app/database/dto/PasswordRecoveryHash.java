@@ -15,6 +15,8 @@ import javax.persistence.Table;
 @Table(name = "password_recovery_hashes")
 public class PasswordRecoveryHash implements Serializable {
 
+	private static final long serialVersionUID = -3728885595725969061L;
+	
 	private User user;
 	private String hash;
 	private Timestamp createdTimestamp;

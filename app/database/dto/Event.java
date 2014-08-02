@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -35,11 +36,13 @@ public class Event implements Serializable, Jsonable {
 	public static final String START_TIME = "startTime";
 	public static final String END_TIME = "endTime";
 	public static final String ATTENDANCE = "attendance";
+	public static final String EVENT_OWNER = "eventOwner";
 	
 	private Integer eventId;
 	private String name;
 	private Date startTime;
 	private Date endTime;
+	private User eventOwner;
 	private List<EventAttendance> attendance;
 	
 	public Event() {
@@ -84,6 +87,16 @@ public class Event implements Serializable, Jsonable {
 		this.endTime = endTime;
 	}
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "user_id")
+	public User getEventOwner() {
+		return eventOwner;
+	}
+	
+	public void setEventOwner(User eventOwner) {
+		this.eventOwner = eventOwner;
+	}
+	
 	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "event_id")
 	public List<EventAttendance> getAttendance() {
@@ -93,6 +106,7 @@ public class Event implements Serializable, Jsonable {
 	public void setAttendance(List<EventAttendance> attendance) {
 		this.attendance = attendance;
 	}
+
 
 	@Override
 	public Json toJson() {
