@@ -103,4 +103,28 @@ object UserDao {
 			permissionsGroupsList;
 
 	}
+
+	def login(email: String, password: String): Boolean = {
+			val user = getUser(email).getOrElse(return false);
+			val passwordsMatch = PasswordHash.validatePassword(password, user.getCredentials().getPassword());
+			passwordsMatch;
+
+	}
+
+	def register(email: String, password: String): Option[User] = {
+			val user = new User();
+			user.setEmail(email);
+			val hashedPassword = PasswordHash.createHash(password);
+			val credentials = new Credentials();
+			credentials.setPassword(hashedPassword);
+			user.setCredentials(credentials);
+			val session = hibernateService.getCurrentSession(true);
+			val transaction = session.beginTransaction();
+			session.save(user);
+			session.save(credentials);
+			transaction.commit();
+			hibernateService.closeSessionIfNecessary(session);
+			Option(user);
+
+	}
 }

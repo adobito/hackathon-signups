@@ -239,28 +239,7 @@ object Dao {
 			hibernateService.closeSessionIfNecessary(session);
 			Option(skillCategory);
 	}
-	def login(email: String, password: String): Boolean = {
-			val user = Dao.getUser(email).getOrElse(return false);
-			val passwordsMatch = PasswordHash.validatePassword(password, user.getCredentials().getPassword());
-			passwordsMatch;
 
-	}
-	def register(email: String, password: String): Option[User] = {
-			val user = new User();
-			user.setEmail(email);
-			val hashedPassword = PasswordHash.createHash(password);
-			val credentials = new Credentials();
-			credentials.setPassword(hashedPassword);
-			user.setCredentials(credentials);
-			val session = hibernateService.getCurrentSession(true);
-			val transaction = session.beginTransaction();
-			session.save(user);
-			session.save(credentials);
-			transaction.commit();
-			hibernateService.closeSessionIfNecessary(session);
-			Option(user);
-
-	}
 	def addSessionTokenToUser(userId: Int): Option[LoginSession] = {
 			val user = getUser(userId).getOrElse(return None);
 			val loginSession = new LoginSession();
@@ -316,12 +295,7 @@ object Dao {
 			}
 	}
 	//
-	def getPermissionsGroups(userId: Int): List[PermissionsGroup] = {
-			val user = getUser(userId).getOrElse( return Nil);
-			val permissionsGroupsList = user.getPermissionsGroups().asScala.toList;
-			permissionsGroupsList;
 
-	}
 	//
 	def getShirtSizes: List[ShirtSize] = {
 			val session = hibernateService.getCurrentSession(true);
