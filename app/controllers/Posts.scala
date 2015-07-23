@@ -2,7 +2,6 @@ package controllers
 
 import java.util.NoSuchElementException
 import com.google.gson.Gson
-import database.Dao
 import database.json.EventJson
 import database.json.RegisterJson
 import database.json.UserJson
@@ -16,9 +15,9 @@ import database.dao.UserDao
 object Posts extends Controller {
 
 
-	def login = Action { 
-		request => 
-		try {	
+	def login = Action {
+		request =>
+		try {
 			val json = request.body.asJson.getOrElse(throw new NoSuchElementException("No JSON body supplied."));
 			val gson = new Gson();
 			val userJson: RegisterJson = gson.fromJson(json.toString, classOf[RegisterJson]);
@@ -30,11 +29,11 @@ object Posts extends Controller {
 				throw new NoSuchElementException("No password received.");
 			}
 
-			if(!Dao.login(userJson.getEmail(), userJson.getPassword())) {
+			if(!UserDao.login(userJson.getEmail(), userJson.getPassword())) {
 				throw new NoSuchElementException("Passwords do not match.")
 			}
 			val user = UserDao.getUser(userJson.getEmail()).getOrElse(throw new NoSuchElementException("User " + userJson.getEmail() + " not found."));
-			val loginSession = Dao.addSessionTokenToUser(user.getUserId()).getOrElse(throw new NoSuchElementException("")); //this needs to get fixed
+			val loginSession = UserDao.addSessionTokenToUser(user.getUserId()).getOrElse(throw new NoSuchElementException("")); //this needs to get fixed
 			NoContent;
 		}
 		catch {
@@ -45,7 +44,7 @@ object Posts extends Controller {
 	}
 
 	def register = Action {
-		request => 
+		request =>
 		try {
 			val json = request.body.asJson.getOrElse(throw new NoSuchElementException("No JSON body supplied."));
 			val gson = new Gson();
@@ -59,7 +58,7 @@ object Posts extends Controller {
 			if(userJson.getPassword() == null || userJson.getPassword().isEmpty()) {
 				throw new NoSuchElementException("No password received.");
 			}
-			Dao.register(userJson.getEmail(), userJson.getPassword()).getOrElse(throw new Exception()); //need to manage this
+			UserDao.register(userJson.getEmail(), userJson.getPassword()).getOrElse(throw new Exception()); //need to manage this
 
 			Created(""); //send token?
 		}
@@ -70,12 +69,12 @@ object Posts extends Controller {
 	}
 
 	def newEvent = Action {
-		request => 
+		request =>
 		try {
 			val json = request.body.asJson.getOrElse(throw new NoSuchElementException("No JSON body supplied."));
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse("token", Seq(""))(0);
-			val session = Dao.getLoginSession(token).getOrElse(throw new Exception("Forbidden. Must Auth.")); //must fix
+			val session = UserDao.getLoginSession(token).getOrElse(throw new Exception("Forbidden. Must Auth.")); //must fix
 			val user = session.getUser();
 			val eventJson = JsonUtils.getGson.fromJson(json.toString, classOf[EventJson]);
 			val event = EventDao.addEvent(eventJson.getName(), eventJson.getStartTime(), eventJson.getEndTime(),user)
@@ -88,7 +87,7 @@ object Posts extends Controller {
 		}
 	}
 	def attendEvent(eventId: Int) = Action {
-		request => 
+		request =>
 		try {
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse("token", Seq(""))(0);
@@ -99,7 +98,7 @@ object Posts extends Controller {
 			if(attendingOpt.isDefined) {
 				throw new IndexOutOfBoundsException("Already attending this event.");
 			}
-			val eventAttendance = Dao.attendEvent(event.getEventId(), user.getUserId());
+			val eventAttendance = EventDao.addEventAttendee(event.getEventId(), user.getUserId());
 			NoContent;
 		}
 		catch {
@@ -109,16 +108,16 @@ object Posts extends Controller {
 		}
 	}
 	def updatePassword = Action {
-		request => 
+		request =>
 		try {
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse("token", Seq(""))(0);
 			val json = request.body.asJson.getOrElse(throw new NoSuchElementException("No JSON body supplied."));
 			val userJson: RegisterJson = JsonUtils.getGson.fromJson(json.toString, classOf[RegisterJson]);
 			val oldPassword = userJson.getPassword();
-			val session = UserDao.getLoginSession(token).getOrElse(throw new AuthenticationException("No valid session supplied.")); 
+			val session = UserDao.getLoginSession(token).getOrElse(throw new AuthenticationException("No valid session supplied."));
 			val user = session.getUser();
-			val loginSuccessful = Dao.login(user.getEmail(), oldPassword);
+			val loginSuccessful = UserDao.login(user.getEmail(), oldPassword);
 			if(!loginSuccessful) {
 				throw new AuthenticationException("Passwords don't match.")
 			}
@@ -138,7 +137,7 @@ object Posts extends Controller {
 	}
 
 	def users(id: Int) = Action {
-		request => 
+		request =>
 		try {
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse("token", Seq(""))(0);
@@ -161,7 +160,7 @@ object Posts extends Controller {
 
 	}
 	//	def recoverPassword = Action {
-	//	  request => 
+	//	  request =>
 	//	  try {
 	//			val headersMap = request.headers.toMap;
 	//			val json = request.body.asJson.getOrElse(throw new NoSuchElementException("No JSON body supplied."));
