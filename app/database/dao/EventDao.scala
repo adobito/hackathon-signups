@@ -30,14 +30,14 @@ object EventDao {
 			val criteria = session.createCriteria(classOf[Event])
 					.add(Restrictions.lt(Event.START_TIME, date))
 					.setCacheable(true);
-			val events = criteria.list().asInstanceOf[List[Event]];
+			val events = criteria.list().toList.asInstanceOf[List[Event]];
 			hibernateService.closeSessionIfNecessary(session);
 			events;
   }
 	def getEvent(eventId: Int): Option[Event] = {
 			val session = hibernateService.getCurrentSession(true);
 			val criteria = session.createCriteria(classOf[Event])
-					.add(Restrictions.eq(Event.EVENT_ID, eventId))
+					.add(Restrictions.eq(Event.ID, eventId))
 					.setCacheable(true);
 			val event = criteria.uniqueResult().asInstanceOf[Event];
 			hibernateService.closeSessionIfNecessary(session);
@@ -48,7 +48,7 @@ object EventDao {
 			val criteria = session.createCriteria(classOf[EventAttendance],"attendance")
 					.createAlias("attendance.event", "event")
 					.add(Restrictions.eq("event.eventId", eventId));
-			val eventAttendanceList = criteria.list().asInstanceOf[java.util.List[EventAttendance]].toList;
+			val eventAttendanceList = criteria.list().toList.asInstanceOf[List[EventAttendance]]
 			hibernateService.closeSessionIfNecessary(session);
 			eventAttendanceList;
 	}
@@ -63,27 +63,40 @@ object EventDao {
 			Option(eventAttendee);
 	}
 	def getEventAttendee(event: Event, user: User): Option[EventAttendance] = {
-			getEventAttendee(event.getEventId(), user.getUserId());
+			getEventAttendee(event.getEventId(), user.getId());
 	}
-	def addEvent(name: String, startTime: Date, endTime: Date, user: User): Option[Event] = {
+	def createEvent(name: String, startTime: Date, endTime: Date, user: User): Option[Event] = {
 			val event = new Event();
 			event.setName(name);
 			event.setStartTime(startTime);
 			event.setEndTime(endTime);
 			event.setEventOwner(user);
-			addEvent(event);
+			createEvent(event);
 	}
-	def addEvent(event: Event): Option[Event] = {
-			None;
+	def createEvent(event: Event): Option[Event] = {
+		val session = hibernateService.getCurrentSession(true);
+		val txn = session.beginTransaction();
+		session.save(event);
+		txn.commit();
+		hibernateService.closeSessionIfNecessary(session);
+		Option(event);
 	}
-	def addEventAttendee(eventId: Int, userId: Int): Option[EventAttendance] = {
+	def attendEvent(eventId: Int, userId: Int): Option[EventAttendance] = {
 	  val event = getEvent(eventId).getOrElse(return None);
 	  val user = UserDao.getUser(userId).getOrElse(return None);
-	  addEventAttendee(event, user);
+	  attendEvent(event, user);
 
 	}
-	def addEventAttendee(event: Event, user: User): Option[EventAttendance] = {
-			None;
+	def attendEvent(event: Event, user: User): Option[EventAttendance] = {
+		val session = hibernateService.getCurrentSession(true);
+		val txn = session.beginTransaction();
+		val eventAttendance = new EventAttendance();
+		eventAttendance.setEvent(event);
+		eventAttendance.setUser(user);
+		session.save(eventAttendance);
+		txn.commit();
+		hibernateService.closeSessionIfNecessary(session);
+		Option(eventAttendance);
 	}
 	def updateEvent(id: Int,name: Option[String], startTime: Option[Date], endTime: Option[Date]): Option[Event] = {
 			val event = getEvent(id).getOrElse(return None);

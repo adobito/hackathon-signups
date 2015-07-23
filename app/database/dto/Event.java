@@ -31,7 +31,7 @@ public class Event implements Serializable, Jsonable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public static final String EVENT_ID = "eventId";
+	public static final String ID = "id";
 	public static final String NAME = "name";
 	public static final String START_TIME = "startTime";
 	public static final String END_TIME = "endTime";
@@ -51,7 +51,7 @@ public class Event implements Serializable, Jsonable {
 	
 	@Id
 	@GeneratedValue
-	@Column(name = "event_id")
+	@Column(name = "id")
 	public Integer getEventId() {
 		return eventId;
 	}
@@ -88,7 +88,7 @@ public class Event implements Serializable, Jsonable {
 	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_id")
+	@JoinColumn(name = "event_owner")
 	public User getEventOwner() {
 		return eventOwner;
 	}
@@ -114,10 +114,15 @@ public class Event implements Serializable, Jsonable {
 		return new EventJson(this);
 	}
 
-
-	
-	
-	
-	
-
+	@Override
+	public String toString() {
+		return "Event{" +
+				"id=" + eventId +
+				", name='" + name + '\'' +
+				", startTime=" + startTime +
+				", endTime=" + endTime +
+				", eventOwner=" + eventOwner +
+				", attendance=" + attendance +
+				'}';
+	}
 }

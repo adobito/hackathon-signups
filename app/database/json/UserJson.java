@@ -22,21 +22,12 @@ public class UserJson implements Json {
 
 	public UserJson(User user) {
 		if(user != null) {
-			this.userId = user.getUserId();
+			this.userId = user.getId();
 			this.name = user.getName();
 			this.email = user.getEmail();
 			this.github = user.getGithub();
 			this.linkedin = user.getLinkedin();
 			this.twitter = user.getTwitter();
-			if(user.getResume() != null) {
-				this.resumePath = user.getResume().getPath();
-			}
-			if(user.getSex() != null) {
-				this.sex = user.getSex().getName();
-			}
-			if(user.getShirtSize() != null) {
-				this.shirtSize = user.getShirtSize().getName();
-			}
 		}
 	}
 	public Integer getUserId() {

@@ -1,9 +1,12 @@
 package controllers
+import java.util.Date
 
+import database.dao.{EventDao, UserDao}
+import database.dto.Event
 import play.api.mvc._
 
 object Application extends Controller {
 	def index = Action {
-	  Ok("Your new application is ready.");
+	  Ok(views.html.bootstrap())
 	}
 }

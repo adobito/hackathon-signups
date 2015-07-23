@@ -33,7 +33,7 @@ object Posts extends Controller {
 				throw new NoSuchElementException("Passwords do not match.")
 			}
 			val user = UserDao.getUser(userJson.getEmail()).getOrElse(throw new NoSuchElementException("User " + userJson.getEmail() + " not found."));
-			val loginSession = UserDao.addSessionTokenToUser(user.getUserId()).getOrElse(throw new NoSuchElementException("")); //this needs to get fixed
+			val loginSession = UserDao.addSessionTokenToUser(user.getId()).getOrElse(throw new NoSuchElementException("")); //this needs to get fixed
 			NoContent;
 		}
 		catch {
@@ -77,7 +77,7 @@ object Posts extends Controller {
 			val session = UserDao.getLoginSession(token).getOrElse(throw new Exception("Forbidden. Must Auth.")); //must fix
 			val user = session.getUser();
 			val eventJson = JsonUtils.getGson.fromJson(json.toString, classOf[EventJson]);
-			val event = EventDao.addEvent(eventJson.getName(), eventJson.getStartTime(), eventJson.getEndTime(),user)
+			val event = EventDao.createEvent(eventJson.getName(), eventJson.getStartTime(), eventJson.getEndTime(),user)
 					.getOrElse(throw new Exception("Something went wrong.."));
 			Ok(event.toJson().toJsonString()).as("application/json");
 		}
@@ -94,11 +94,11 @@ object Posts extends Controller {
 			val session = UserDao.getLoginSession(token).getOrElse(throw new Exception("Forbidden. Must Auth.")); //must fix
 			val user = session.getUser();
 			val event = EventDao.getEvent(eventId).getOrElse(throw new NoSuchElementException("No event found."));
-			val attendingOpt = EventDao.getEventAttendee(eventId, user.getUserId());
+			val attendingOpt = EventDao.getEventAttendee(eventId, user.getId());
 			if(attendingOpt.isDefined) {
 				throw new IndexOutOfBoundsException("Already attending this event.");
 			}
-			val eventAttendance = EventDao.addEventAttendee(event.getEventId(), user.getUserId());
+			val eventAttendance = EventDao.attendEvent(event.getEventId(), user.getId());
 			NoContent;
 		}
 		catch {
@@ -131,9 +131,6 @@ object Posts extends Controller {
 		case e: Exception => { InternalServerError("Something went wrong...") };
 		}
 
-	}
-	def uploadResume = Action {
-		NoContent;
 	}
 
 	def users(id: Int) = Action {

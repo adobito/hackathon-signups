@@ -4,8 +4,6 @@ import java.util.Date
 
 import com.google.gson.Gson
 import database.dao._
-import database.dto.{Sex, ShirtSize}
-import database.json.{SexJson, ShirtSizeJson, UniversityJson}
 import play.api.mvc.{Action, Controller}
 import utils.JsonUtils
 
@@ -91,27 +89,6 @@ object Gets extends Controller {
 		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
 		}
 	}
-	def universities = Action {
-		request =>
-		try {
-			val headersMap = request.headers.toMap;
-			val token = headersMap.getOrElse("token", Seq(""))(0);
-			val sessionOpt = UserDao.getLoginSession(token);
-			if(sessionOpt.isEmpty) {
-				throw new Exception("No active session found.");
-			}
-			val universities = UniversityDao.getUniversities();
-			val univertiesArr = new Array[UniversityJson](universities.size);
-			for(i <- 0 until univertiesArr.size) {
-				univertiesArr(i) = universities(i).toJson().asInstanceOf[UniversityJson];
-			}
-			Ok(gson.toJson(univertiesArr)).as("application/json");
-
-		}
-		catch {
-		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
-		}
-	}
 	def event(id: Int) = Action {
 		request =>
 		try {
@@ -138,7 +115,6 @@ object Gets extends Controller {
 //		try {
 //			val headersMap = request.headers.toMap;
 //			val token = headersMap.getOrElse("token", Seq(""))(0);
-//			val sessionOpt = UserDao.getLoginSession(token);
 //			if(sessionOpt.isEmpty) {
 //				throw new Exception("No active session found.");
 //			}
@@ -152,48 +128,6 @@ object Gets extends Controller {
 //		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
 //		}
 //	}
-	def sexes = Action {
-		request =>
-		try {
-			val headersMap = request.headers.toMap;
-			val token = headersMap.getOrElse("token", Seq(""))(0);
-			val sessionOpt = UserDao.getLoginSession(token);
-			if(sessionOpt.isEmpty) {
-				throw new Exception("No active session found."); // should say authenticate
-			}
-			val sexes: List[Sex] = SexDao.getSexes();
-			val sexesArr = new Array[SexJson](sexes.size);
-			for(i <- 0 until sexesArr.size) {
-				sexesArr(i) = sexes(i).toJson().asInstanceOf[SexJson];
-			}
-			Ok(gson.toJson(sexesArr)).as("application/json");
-
-		}
-		catch {
-		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
-		}
-	}
-	def shirts = Action {
-	  		request =>
-		try {
-			val headersMap = request.headers.toMap;
-			val token = headersMap.getOrElse("token", Seq(""))(0);
-			val sessionOpt = UserDao.getLoginSession(token);
-			if(sessionOpt.isEmpty) {
-				throw new Exception("No active session found."); // should say authenticate
-			}
-			val shirts: List[ShirtSize] = ShirtSizeDao.getShirtSizes();
-			val shirtsArr = new Array[ShirtSizeJson](shirts.size);
-			for(i <- 0 until shirtsArr.size) {
-				shirtsArr(i) = shirts(i).toJson().asInstanceOf[ShirtSizeJson];
-			}
-			Ok(gson.toJson(shirtsArr)).as("application/json");
-
-		}
-		catch {
-		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
-		}
-	}
 
 
 }

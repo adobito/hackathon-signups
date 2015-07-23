@@ -22,7 +22,7 @@ public class EventAttendance implements Serializable {
 	public static final String USER = "user";
 	public static final String USER_ID = USER + "." + User.ID;
 	public static final String EVENT = "event";
-	public static final String EVENT_ID = EVENT + "." + Event.EVENT_ID;
+	public static final String EVENT_ID = EVENT + "." + Event.ID;
 	
 	private User user;
 	private Event event;

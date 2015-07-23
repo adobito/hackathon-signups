@@ -2,7 +2,6 @@ package database.dao
 
 import database.dto.User
 import database.dto.LoginSession
-import database.dto.Credentials
 import cryptography.PasswordHash
 import database.Database
 import org.hibernate.criterion.Restrictions
@@ -43,9 +42,7 @@ object UserDao {
 	def addUser(email: String, password: String): Option[User] = {
 			val user = new User();
 			user.setEmail(email);
-			val credentials = new Credentials();
-			credentials.setPassword(PasswordHash.createHash(password));
-			user.setCredentials(credentials);
+			user.setPasswordHash(PasswordHash.createHash(password));
 			addUser(user);
 	}
 	def addUser(user: User): Option[User] = {
@@ -106,7 +103,7 @@ object UserDao {
 
 	def login(email: String, password: String): Boolean = {
 			val user = getUser(email).getOrElse(return false);
-			val passwordsMatch = PasswordHash.validatePassword(password, user.getCredentials().getPassword());
+			val passwordsMatch = PasswordHash.validatePassword(password, user.getPasswordHash());
 			passwordsMatch;
 
 	}
@@ -115,13 +112,10 @@ object UserDao {
 			val user = new User();
 			user.setEmail(email);
 			val hashedPassword = PasswordHash.createHash(password);
-			val credentials = new Credentials();
-			credentials.setPassword(hashedPassword);
-			user.setCredentials(credentials);
+			user.setPasswordHash(hashedPassword);
 			val session = hibernateService.getCurrentSession(true);
 			val transaction = session.beginTransaction();
 			session.save(user);
-			session.save(credentials);
 			transaction.commit();
 			hibernateService.closeSessionIfNecessary(session);
 			Option(user);
