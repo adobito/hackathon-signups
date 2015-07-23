@@ -229,11 +229,7 @@ object Dao {
 			hibernateService.closeSessionIfNecessary(session);
 			skills;
 	}
-	def getSkillsByUser(userId:Int): List[Skill] = {
-			val user = getUser(userId).getOrElse(return List[Skill]());
-			val skills = user.getSkills();
-			return skills.asScala.toList;
-	}
+
 	//Skill Cats
 	def getSkillCategory(id: Int): Option[SkillCategory] = {
 			val session = hibernateService.getCurrentSession(true);
@@ -278,22 +274,14 @@ object Dao {
 			session.close();
 			Option(loginSession);
 	}
-	def deleteSessionToken(token: String): Boolean = {
-			val loginSession = getLoginSession(token).getOrElse(return false);
-			val session = hibernateService.getCurrentSession(true);
-			val transaction = session.beginTransaction();
-			session.delete(loginSession);
-			transaction.commit();
-			session.close();
-			true;	
-	}
+
 	def addEvent(name: String, startTime: Date, endTime: Date): Option[Event] = {
 			if(startTime.after(endTime)) {
-				return None;			
+				return None;
 			}
 			if(startTime.before(new Date())) { //if start time before now
 				return None;
-			} 
+			}
 			if(name.isEmpty()) {
 				return None;
 			}
@@ -365,4 +353,4 @@ object Dao {
 
 
 
-}	
+}

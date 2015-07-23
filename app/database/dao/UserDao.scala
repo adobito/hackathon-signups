@@ -10,7 +10,7 @@ import scala.collection.JavaConversions._
 
 object UserDao {
   private val hibernateService = Database.HibernateService;
-  
+
 	def getUser(userId: Int): Option[User] = {
 			val session = hibernateService.getCurrentSession(true);
 			val criteria = session.createCriteria(classOf[User])
@@ -69,7 +69,7 @@ object UserDao {
 			hibernateService.closeSessionIfNecessary(session);
 			Option(loginSession);
 	}
-	
+
 	def getLoginSessions(userId: Int): List[LoginSession] = {
 			val user = getUser(userId).getOrElse(return Nil);
 			getLoginSessions(user);
@@ -80,5 +80,27 @@ object UserDao {
 	}
 	def getLoginSessions(user: User): List[LoginSession] = {
 			Nil;
+	}
+	def deleteSessionToken(token: String): Boolean = {
+			val loginSession = getLoginSession(token).getOrElse(return false);
+			val session = hibernateService.getCurrentSession(true);
+			val transaction = session.beginTransaction();
+			session.delete(loginSession);
+			transaction.commit();
+			session.close();
+			true;
+	}
+
+	def getSkillsByUser(userId:Int): List[Skill] = {
+		val user = getUser(userId).getOrElse(return List[Skill]());
+		val skills = user.getSkills();
+		skills.asScala.toList;
+	}
+
+	def getPermissionsGroups(userId: Int): List[PermissionsGroup] = {
+			val user = getUser(userId).getOrElse( return Nil);
+			val permissionsGroupsList = user.getPermissionsGroups().asScala.toList;
+			permissionsGroupsList;
+
 	}
 }

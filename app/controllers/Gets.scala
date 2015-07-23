@@ -2,7 +2,6 @@ package controllers
 
 import com.google.gson.Gson
 
-import database.Dao
 import database.dao.ShirtSizeDao
 import database.dao.UserDao
 import database.dto.Sex
@@ -18,11 +17,11 @@ object Gets extends Controller {
 	private val gson = new Gson();
 
 	def usersAll = Action {
-		val users = Dao.getUsers(0, 20).toArray;
+		val users = UserDao.getUsers(0, 20).toArray;
 		Ok(gson.toJson(users));
 	}
 	def users(id: Int) = Action {
-		request => 
+		request =>
 		try {
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse("token", Seq(""))(0);
@@ -30,7 +29,7 @@ object Gets extends Controller {
 			if(sessionOpt.isEmpty) {
 				throw new Exception("No active session found.");
 			}
-			val userOpt = Dao.getUser(id);
+			val userOpt = UserDao.getUser(id);
 			val user = userOpt.getOrElse(throw new NoSuchElementException("No user with user_id = " + id));
 
 			Ok(user.toJson().toJsonString()).as("application/json");
@@ -42,7 +41,7 @@ object Gets extends Controller {
 		}
 	}
 	def userSkills(userId: Int) = Action {
-		val skills = Dao.getSkillsByUser(userId);
+		val skills = UserDao.getSkillsByUser(userId);
 		val jsonArr = new Array[SkillJson](skills.size);
 		for(i <- 0 until skills.size) {
 			jsonArr(i) = new SkillJson(skills(i));
@@ -50,7 +49,7 @@ object Gets extends Controller {
 		Ok(gson.toJson(jsonArr)).as("application/json");
 	}
 	def userMe = Action {
-		request => 
+		request =>
 		try {
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse("token", Seq(""))(0);
@@ -62,13 +61,13 @@ object Gets extends Controller {
 		}
 	}
 	def logout = Action {
-		request => 
+		request =>
 		try {
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse("token", Seq(""))(0);
 			val loginSessionOpt = UserDao.getLoginSession(token);
 			if(loginSessionOpt.isDefined) {
-				Dao.deleteSessionToken(loginSessionOpt.get.getToken());
+				UserDao.deleteSessionToken(loginSessionOpt.get.getToken());
 			}
 			Ok("Logged out successfully.");
 		}
@@ -77,7 +76,7 @@ object Gets extends Controller {
 		}
 	}
 	def universities = Action {
-		request => 
+		request =>
 		try {
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse("token", Seq(""))(0);
@@ -85,7 +84,7 @@ object Gets extends Controller {
 			if(sessionOpt.isEmpty) {
 				throw new Exception("No active session found.");
 			}
-			val universities = Dao.getUniversities();
+			val universities = UniversityDao.getUniversities();
 			val univertiesArr = new Array[UniversityJson](universities.size);
 			for(i <- 0 until univertiesArr.size) {
 				univertiesArr(i) = universities(i).toJson().asInstanceOf[UniversityJson];
@@ -98,7 +97,7 @@ object Gets extends Controller {
 		}
 	}
 	def event(id: Int) = Action {
-		request => 
+		request =>
 		try {
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse("token", Seq(""))(0);
@@ -106,7 +105,7 @@ object Gets extends Controller {
 			if(sessionOpt.isEmpty) {
 				throw new Exception("No active session found.");
 			}
-			val event = Dao.getEvent(id).getOrElse(throw new NoSuchElementException("Event with event id = " + id + " not found."));
+			val event = EventDao.getEvent(id).getOrElse(throw new NoSuchElementException("Event with event id = " + id + " not found."));
 			Ok(event.toJson().toJsonString()).as("application/json");
 
 		}
@@ -119,16 +118,16 @@ object Gets extends Controller {
 		NotFound("Nothing here yet.");
 	}
 	def permissionsGroups(userId: Int) = Action {
-		request => 
+		request =>
 		try {
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse("token", Seq(""))(0);
-			val sessionOpt = Dao.getLoginSession(token);
+			val sessionOpt = UserDao.getLoginSession(token);
 			if(sessionOpt.isEmpty) {
 				throw new Exception("No active session found.");
 			}
 			val user = UserDao.getUser(userId).getOrElse(throw new NoSuchElementException("No used with user id = " + userId));
-			val permissions = Dao.getPermissionsGroups(userId);
+			val permissions = UserDao.getPermissionsGroups(userId);
 			Ok(gson.toJson(permissions.toArray)).as("application/json");
 
 		}
@@ -138,7 +137,7 @@ object Gets extends Controller {
 		}
 	}
 	def sexes = Action {
-		request => 
+		request =>
 		try {
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse("token", Seq(""))(0);
@@ -146,7 +145,7 @@ object Gets extends Controller {
 			if(sessionOpt.isEmpty) {
 				throw new Exception("No active session found."); // should say authenticate
 			}
-			val sexes: List[Sex] = Dao.getSexes();
+			val sexes: List[Sex] = SexDao.getSexes();
 			val sexesArr = new Array[SexJson](sexes.size);
 			for(i <- 0 until sexesArr.size) {
 				sexesArr(i) = sexes(i).toJson().asInstanceOf[SexJson];
@@ -159,7 +158,7 @@ object Gets extends Controller {
 		}
 	}
 	def shirts = Action {
-	  		request => 
+	  		request =>
 		try {
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse("token", Seq(""))(0);
@@ -179,6 +178,6 @@ object Gets extends Controller {
 		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
 		}
 	}
-	
+
 
 }
